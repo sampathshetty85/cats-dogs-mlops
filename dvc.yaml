@@ -1,0 +1,17 @@
+stages:
+  preprocess:
+    cmd: python src/data/preprocess.py
+    deps:
+      - src/data/preprocess.py
+      - data/raw/
+    outs:
+      - data/processed/
+
+  train:
+    cmd: python src/model/train.py
+    deps:
+      - src/model/train.py
+      - src/model/architecture.py
+      - data/processed/
+    outs:
+      - models/cats_dogs_cnn.pt

@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.pytest_cache/
+.venv/
+*.egg-info/
+
+# Data — managed by DVC
+data/raw/
+data/processed/
+
+# Model artifacts — managed by DVC
+models/*.pt
+
+# MLflow
+mlruns/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# OS
+.DS_Store
+
+# Environment
+.env
