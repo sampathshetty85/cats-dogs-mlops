@@ -1,0 +1,12 @@
+# Report: step_1_download
+# Generated: 2026-08-21T13:47:26Z
+#------------------------------------------------------------
+
+Dataset      : shaunthesheep/microsoft-catsvsdogs-dataset
+Source       : https://www.kaggle.com/datasets/shaunthesheep/microsoft-catsvsdogs-dataset
+Destination  : /Users/I348975/Library/CloudStorage/OneDrive-SAPSE/Personal Documents/BITS Pilani-Mtech in AI : ML/Sem-3/MLOps/MLOps Assignment 2/cats-dogs-mlops/data/raw
+Cat images   : 12,500
+Dog images   : 12,500
+Total images : 25,000
+Size on disk : 826.1 MB
+DVC remote   : /tmp/dvc-remote (local)
