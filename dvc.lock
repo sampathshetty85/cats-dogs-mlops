@@ -18,3 +18,24 @@ stages:
       md5: e152673cb0aa56ae00e99b060131ac7e.dir
       size: 565081910
       nfiles: 24998
+  train:
+    cmd: python src/model/train.py
+    deps:
+    - path: data/processed/
+      hash: md5
+      md5: e152673cb0aa56ae00e99b060131ac7e.dir
+      size: 565081910
+      nfiles: 24998
+    - path: src/model/architecture.py
+      hash: md5
+      md5: 6597f409b54f18389c91d2b10c3b3136
+      size: 1854
+    - path: src/model/train.py
+      hash: md5
+      md5: 6da3da1d15acb556a00bf414ffea695c
+      size: 8484
+    outs:
+    - path: models/cats_dogs_cnn.pt
+      hash: md5
+      md5: 4268db2400b1bdb1a46480be04b175ab
+      size: 13234105

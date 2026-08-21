@@ -1,0 +1,18 @@
+# Report: step_5_mlflow
+# Generated: 2026-08-21T14:47:28Z
+#------------------------------------------------------------
+
+Experiment   : cats-dogs-classification
+Run name     : SimpleCNN_5ep
+Run ID       : 87a9989045ca47a59a26343a4a096d27
+Tracking URI : /Users/I348975/Library/CloudStorage/OneDrive-SAPSE/Personal Documents/BITS Pilani-Mtech in AI : ML/Sem-3/MLOps/MLOps Assignment 2/cats-dogs-mlops/mlruns
+
+Logged parameters:
+  architecture=SimpleCNN, epochs=5, batch_size=32, lr=0.001
+  optimizer=Adam, loss_fn=BCELoss, image_size=224
+
+Final epoch metrics:
+  train_loss=0.4149  train_acc=0.8158
+  val_loss=0.3787    val_acc=0.8267
+
+Logged artifacts: loss_curves.png, confusion_matrix.png, model/

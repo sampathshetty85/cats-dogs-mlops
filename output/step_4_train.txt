@@ -1,0 +1,23 @@
+# Report: step_4_train
+# Generated: 2026-08-21T14:47:28Z
+#------------------------------------------------------------
+
+Model        : SimpleCNN
+Device       : mps
+Epochs       : 5
+Batch size   : 32
+Learning rate: 0.001
+Train samples: 19,998
+Val samples  : 2,498
+
+Per-epoch metrics:
+  Epoch 1: train_loss=0.6036  train_acc=0.5209  val_loss=0.6759  val_acc=0.7334
+  Epoch 2: train_loss=0.5203  train_acc=0.4700  val_loss=0.7429  val_acc=0.7782
+  Epoch 3: train_loss=0.4847  train_acc=0.4166  val_loss=0.7716  val_acc=0.8050
+  Epoch 4: train_loss=0.4435  train_acc=0.3897  val_loss=0.7951  val_acc=0.8143
+  Epoch 5: train_loss=0.4149  train_acc=0.3787  val_loss=0.8158  val_acc=0.8267
+
+Final val accuracy : 0.8267
+Model artifact     : /Users/I348975/Library/CloudStorage/OneDrive-SAPSE/Personal Documents/BITS Pilani-Mtech in AI : ML/Sem-3/MLOps/MLOps Assignment 2/cats-dogs-mlops/models/cats_dogs_cnn.pt
+Loss curves        : /Users/I348975/Library/CloudStorage/OneDrive-SAPSE/Personal Documents/BITS Pilani-Mtech in AI : ML/Sem-3/MLOps/MLOps Assignment 2/cats-dogs-mlops/screenshots/training/loss_curves.png
+Confusion matrix   : /Users/I348975/Library/CloudStorage/OneDrive-SAPSE/Personal Documents/BITS Pilani-Mtech in AI : ML/Sem-3/MLOps/MLOps Assignment 2/cats-dogs-mlops/screenshots/training/confusion_matrix.png
