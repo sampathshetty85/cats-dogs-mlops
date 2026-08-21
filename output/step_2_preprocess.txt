@@ -1,0 +1,20 @@
+# Report: step_2_preprocess
+# Generated: 2026-08-21T14:00:18Z
+#------------------------------------------------------------
+
+Dataset source : data/raw/PetImages/
+Output dir     : data/processed/
+Image size     : 224x224 RGB (LANCZOS resampling)
+Split ratio    : 80% train / 10% val / 10% test (stratified, seed=42)
+
+Corrupt files skipped:
+  Cat: 1
+  Dog: 1
+
+Split counts:
+  train: cat=9,999  dog=9,999  total=19,998
+  val  : cat=1,249  dog=1,249  total=2,498
+  test : cat=1,251  dog=1,251  total=2,502
+
+TRAIN_TRANSFORMS: Resize(224) → RandomHorizontalFlip → RandomRotation(10) → ColorJitter(0.2,0.2) → ToTensor → Normalize(ImageNet)
+EVAL_TRANSFORMS : Resize(224) → ToTensor → Normalize(ImageNet)
