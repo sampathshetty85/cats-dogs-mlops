@@ -13,10 +13,10 @@ from prometheus_client import Counter
 from prometheus_fastapi_instrumentator import Instrumentator
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
-from src.api.schemas import PredictionResponse
-from src.data.preprocess import EVAL_TRANSFORMS
-from src.model.architecture import SimpleCNN
-from src.report_writer import write_report
+from src.api.schemas import PredictionResponse  # noqa: E402
+from src.data.preprocess import EVAL_TRANSFORMS  # noqa: E402
+from src.model.architecture import SimpleCNN  # noqa: E402
+from src.report_writer import write_report  # noqa: E402
 
 logging.basicConfig(level=logging.INFO, format="%(message)s")
 logger = logging.getLogger(__name__)

@@ -1,22 +1,21 @@
 import os
 import sys
 
-import matplotlib
+import matplotlib  # noqa: E402
 matplotlib.use("Agg")
-import matplotlib.pyplot as plt
-import numpy as np
-import torch
-import torch.nn as nn
-from torch.utils.data import DataLoader
-from torchvision import datasets
-from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
-import mlflow
-import mlflow.pytorch
+import matplotlib.pyplot as plt  # noqa: E402
+import torch  # noqa: E402
+import torch.nn as nn  # noqa: E402
+from torch.utils.data import DataLoader  # noqa: E402
+from torchvision import datasets  # noqa: E402
+from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay  # noqa: E402
+import mlflow  # noqa: E402
+import mlflow.pytorch  # noqa: E402
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
-from src.model.architecture import SimpleCNN
-from src.data.preprocess import TRAIN_TRANSFORMS, EVAL_TRANSFORMS
-from src.report_writer import write_report
+from src.model.architecture import SimpleCNN  # noqa: E402
+from src.data.preprocess import TRAIN_TRANSFORMS, EVAL_TRANSFORMS  # noqa: E402
+from src.report_writer import write_report  # noqa: E402
 
 REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 PROCESSED_DIR = os.path.join(REPO_ROOT, "data", "processed")
@@ -155,7 +154,9 @@ def main():
             val_losses.append(v_loss)
             train_accs.append(t_acc)
             val_accs.append(v_acc)
-            print(f"[train] Epoch {epoch}/{EPOCHS}  train_loss={t_loss:.4f}  train_acc={t_acc:.4f}  val_loss={v_loss:.4f}  val_acc={v_acc:.4f}")
+            print(f"[train] Epoch {epoch}/{EPOCHS}  "
+                  f"train_loss={t_loss:.4f}  train_acc={t_acc:.4f}  "
+                  f"val_loss={v_loss:.4f}  val_acc={v_acc:.4f}")
             mlflow.log_metrics({
                 "train_loss": t_loss, "train_accuracy": t_acc,
                 "val_loss": v_loss, "val_accuracy": v_acc,
@@ -182,7 +183,7 @@ def main():
     print(f"[train] MLflow run ID: {run_id}")
 
     train_report = [
-        f"Model        : SimpleCNN",
+        "Model        : SimpleCNN",
         f"Device       : {device}",
         f"Epochs       : {EPOCHS}",
         f"Batch size   : {BATCH_SIZE}",
@@ -193,7 +194,10 @@ def main():
         "Per-epoch metrics:",
     ]
     for i, (tl, ta, vl, va) in enumerate(zip(train_losses, val_losses, train_accs, val_accs), 1):
-        train_report.append(f"  Epoch {i}: train_loss={tl:.4f}  train_acc={ta:.4f}  val_loss={vl:.4f}  val_acc={va:.4f}")
+        train_report.append(
+            f"  Epoch {i}: train_loss={tl:.4f}  train_acc={ta:.4f}"
+            f"  val_loss={vl:.4f}  val_acc={va:.4f}"
+        )
     train_report += [
         "",
         f"Final val accuracy : {val_accs[-1]:.4f}",
@@ -204,14 +208,14 @@ def main():
     write_report("step_4_train", train_report)
 
     mlflow_report = [
-        f"Experiment   : cats-dogs-classification",
-        f"Run name     : SimpleCNN_5ep",
+        "Experiment   : cats-dogs-classification",
+        "Run name     : SimpleCNN_5ep",
         f"Run ID       : {run_id}",
         f"Tracking URI : {os.path.join(REPO_ROOT, 'mlruns')}",
         "",
         "Logged parameters:",
         f"  architecture={SimpleCNN.__name__}, epochs={EPOCHS}, batch_size={BATCH_SIZE}, lr={LR}",
-        f"  optimizer=Adam, loss_fn=BCELoss, image_size=224",
+        "  optimizer=Adam, loss_fn=BCELoss, image_size=224",
         "",
         "Final epoch metrics:",
         f"  train_loss={train_losses[-1]:.4f}  train_acc={train_accs[-1]:.4f}",

@@ -3,7 +3,7 @@ import subprocess
 import sys
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
-from src.report_writer import write_report
+from src.report_writer import write_report  # noqa: E402
 
 KAGGLE_JSON = os.path.expanduser("~/.kaggle/kaggle.json")
 DATASET = "shaunthesheep/microsoft-catsvsdogs-dataset"
@@ -78,7 +78,7 @@ def main():
         f"Dog images   : {counts.get('Dog', 0):,}",
         f"Total images : {total_images:,}",
         f"Size on disk : {size_mb} MB",
-        f"DVC remote   : /tmp/dvc-remote (local)",
+        "DVC remote   : /tmp/dvc-remote (local)",
     ]
     write_report("step_1_download", report_lines)
 

@@ -1,13 +1,12 @@
 import os
 import sys
 import random
-import shutil
 
 from PIL import Image
 from torchvision import transforms
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
-from src.report_writer import write_report
+from src.report_writer import write_report  # noqa: E402
 
 RAW_DIR = os.path.join(os.path.dirname(__file__), "..", "..", "data", "raw", "PetImages")
 PROCESSED_DIR = os.path.join(os.path.dirname(__file__), "..", "..", "data", "processed")
@@ -118,7 +117,8 @@ def main():
 
     report_lines += [
         "",
-        "TRAIN_TRANSFORMS: Resize(224) → RandomHorizontalFlip → RandomRotation(10) → ColorJitter(0.2,0.2) → ToTensor → Normalize(ImageNet)",
+        "TRAIN_TRANSFORMS: Resize(224) → RandomHorizontalFlip → RandomRotation(10)"
+        " → ColorJitter(0.2,0.2) → ToTensor → Normalize(ImageNet)",
         "EVAL_TRANSFORMS : Resize(224) → ToTensor → Normalize(ImageNet)",
     ]
 
