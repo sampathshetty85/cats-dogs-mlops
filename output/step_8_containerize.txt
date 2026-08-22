@@ -1,0 +1,18 @@
+# Report: step_8_containerize
+# Generated: 2026-08-22T15:00:15Z
+#------------------------------------------------------------
+
+Dockerfile: python:3.12-slim base image
+Image size : 448.8 MB
+Build time : ~200s (pip install torch on first build; cached on rebuild)
+
+Build command : docker build -t cats-dogs-mlops:latest .
+Run command   : docker run -p 8000:8000 cats-dogs-mlops:latest
+
+Endpoint verification (inside container):
+  GET  /health  → {"status": "ok", "model": "SimpleCNN", "version": "1.0"} ✓
+  POST /predict → {"label": "cat", "probability": 0.1971, "inference_time_ms": 319.39} ✓
+  GET  /metrics → cats_dogs_predictions_total{prediction_label="cat"} 1.0 ✓
+
+Model baked in at: /app/models/cats_dogs_cnn.pt (no retraining on container start)
+Startup time: < 6s to first /health 200
