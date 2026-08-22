@@ -1,0 +1,14 @@
+# Report: step_7_api
+# Generated: 2026-08-22T14:52:40Z
+#------------------------------------------------------------
+
+FastAPI Inference Service
+Model path : /Users/I348975/Library/CloudStorage/OneDrive-SAPSE/Personal Documents/BITS Pilani-Mtech in AI : ML/Sem-3/MLOps/MLOps Assignment 2/cats-dogs-mlops/models/cats_dogs_cnn.pt
+Endpoints  :
+  GET  /health  → {"status": "ok", "model": "SimpleCNN", "version": "1.0"}
+  POST /predict → PredictionResponse(label, probability, inference_time_ms)
+  GET  /metrics → Prometheus text format (prometheus-fastapi-instrumentator)
+
+Custom metric: cats_dogs_predictions_total{prediction_label="cat|dog"}
+Structured JSON log per /predict call: {ts, path, label, probability, latency_ms}
+Model loaded once at startup via lifespan context manager (no reload on request)
