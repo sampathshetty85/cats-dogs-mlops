@@ -31,6 +31,7 @@ def get_device():
         return torch.device("cuda")
     return torch.device("cpu")
 
+
 PREDICTION_COUNTER = Counter(
     "cats_dogs_predictions_total",
     "Total predictions made by the inference service",
