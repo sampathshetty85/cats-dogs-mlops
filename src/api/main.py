@@ -8,6 +8,7 @@ from contextlib import asynccontextmanager
 
 import torch
 from fastapi import FastAPI, File, HTTPException, UploadFile
+from fastapi.middleware.cors import CORSMiddleware
 from PIL import Image
 from prometheus_client import Counter
 from prometheus_fastapi_instrumentator import Instrumentator
@@ -61,6 +62,13 @@ app = FastAPI(
 )
 
 Instrumentator().instrument(app).expose(app)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 @app.get("/health")
