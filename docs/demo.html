@@ -58,11 +58,11 @@
 
     /* ── Pipeline steps (what happens) ── */
     .pipeline-steps { display: flex; flex-wrap: wrap; justify-content: center; align-items: flex-start; gap: 0; margin: 1.5rem 0; }
-    .ps { display: flex; flex-direction: column; align-items: center; width: 110px; opacity: 0.35; transition: opacity 0.3s; }
-    .ps.active { opacity: 1; }
+    .ps { display: flex; flex-direction: column; align-items: center; width: 110px; opacity: 1; transition: opacity 0.3s; }
+    .ps.dimmed { opacity: 0.3; }
     .ps .ps-icon { font-size: 1.8rem; width: 52px; height: 52px; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: #eef2f7; border: 2px solid #d0dce8; transition: background 0.3s, border-color 0.3s; }
     .ps.active .ps-icon { background: #daeaff; border-color: #2e6da4; }
-    .ps.done .ps-icon { background: #d4edda; border-color: #28a745; opacity: 1; }
+    .ps.done .ps-icon { background: #d4edda; border-color: #28a745; }
     .ps-label { font-size: 0.75rem; color: #555; text-align: center; margin-top: 0.4rem; line-height: 1.3; }
     .ps-arrow { font-size: 1.3rem; color: #2e6da4; padding: 0 2px; margin-top: 14px; opacity: 0.4; }
 
@@ -365,6 +365,12 @@ python scripts/batch_eval.py</code></pre>
       <h2>CI/CD &amp; Monitoring Links</h2>
       <p style="font-size:0.88rem;color:#555;margin-bottom:1.2rem;">All services run locally via <code>docker compose up -d</code>. CI/CD runs on GitHub.</p>
       <div class="link-grid">
+        <a class="link-card" href="http://127.0.0.1:5000" target="_blank">
+          <span class="lc-icon">🧪</span>
+          <span class="lc-title">MLflow UI</span>
+          <span class="lc-desc">Experiment runs, parameters, metrics, loss curves, confusion matrix artifacts. Run <code>mlflow ui</code> first.</span>
+          <span class="lc-url">127.0.0.1:5000</span>
+        </a>
         <a class="link-card" href="http://localhost:3000" target="_blank">
           <span class="lc-icon">📊</span>
           <span class="lc-title">Grafana Dashboard</span>
@@ -503,16 +509,19 @@ python scripts/batch_eval.py</code></pre>
       resetSteps();
     }
 
-    function resetSteps() { steps.forEach(s => { s.classList.remove('active','done'); }); }
+    function resetSteps() { steps.forEach(s => { s.classList.remove('active','done','dimmed'); }); }
 
     function animateSteps(done) {
       resetSteps();
       const delays = [0, 80, 160, 240, 320, 400, 480];
       steps.forEach((s, i) => {
         setTimeout(() => {
-          steps.forEach((x,j) => { x.classList.toggle('active', j===i); });
+          steps.forEach((x,j) => {
+            x.classList.toggle('active', j===i);
+            x.classList.toggle('dimmed', j!==i);
+          });
           if (done && i === steps.length - 1) {
-            setTimeout(() => steps.forEach(x => { x.classList.remove('active'); x.classList.add('done'); }), 200);
+            setTimeout(() => steps.forEach(x => { x.classList.remove('active','dimmed'); x.classList.add('done'); }), 200);
           }
         }, delays[i]);
       });
@@ -528,7 +537,7 @@ python scripts/batch_eval.py</code></pre>
       // Start pipeline animation
       const animInterval = setInterval(() => {
         const i = (steps.findIndex(s => s.classList.contains('active')) + 1) % steps.length;
-        steps.forEach((s,j) => s.classList.toggle('active', j===i));
+        steps.forEach((s,j) => { s.classList.toggle('active', j===i); s.classList.toggle('dimmed', j!==i); });
       }, 120);
 
       const form = new FormData();
