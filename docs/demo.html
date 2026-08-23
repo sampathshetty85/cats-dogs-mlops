@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PawFinder — Find Your Perfect Companion</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* ── Page overrides ── */
+    header { padding: 2rem 0 1.5rem; }
+    header h1 { font-size: 2rem; }
+
+    .prereq {
+      background: #fff8e1;
+      border-left: 4px solid #f9a825;
+      border-radius: 0 6px 6px 0;
+      padding: 0.6rem 1rem;
+      font-size: 0.88rem;
+      color: #555;
+      margin-bottom: 1.5rem;
+    }
+    .prereq code { background: #f0ece0; padding: 0.1em 0.35em; border-radius: 3px; font-size: 0.87em; }
+
+    /* ── Upload zone ── */
+    .upload-zone {
+      border: 2.5px dashed #2e6da4;
+      border-radius: 12px;
+      background: #f0f6ff;
+      padding: 3rem 2rem;
+      text-align: center;
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s;
+      position: relative;
+    }
+    .upload-zone.drag-over { background: #daeaff; border-color: #1a3a5c; }
+    .upload-zone input[type="file"] {
+      position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
+    }
+    .upload-zone .icon { font-size: 3rem; display: block; margin-bottom: 0.5rem; }
+    .upload-zone p { color: #2e6da4; font-size: 1rem; margin: 0; }
+    .upload-zone small { color: #888; font-size: 0.82rem; }
+
+    /* ── Preview ── */
+    #preview-wrap { margin-top: 1rem; display: none; text-align: center; }
+    #preview-img {
+      max-width: 260px;
+      max-height: 220px;
+      border-radius: 10px;
+      border: 2px solid #d0dce8;
+      object-fit: cover;
+    }
+    #preview-name { font-size: 0.82rem; color: #888; margin-top: 0.3rem; }
+
+    /* ── Identify button ── */
+    #identify-btn {
+      display: block;
+      margin: 1.2rem auto 0;
+      padding: 0.75rem 2.5rem;
+      font-size: 1.05rem;
+      border: none;
+      border-radius: 8px;
+      background: #2e6da4;
+      color: white;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.15s, opacity 0.15s;
+    }
+    #identify-btn:disabled { opacity: 0.4; cursor: default; }
+    #identify-btn:not(:disabled):hover { background: #1a3a5c; }
+    #identify-btn.loading { opacity: 0.7; cursor: wait; }
+
+    /* ── Error ── */
+    #error-box {
+      display: none;
+      margin-top: 1rem;
+      background: #fdecea;
+      border-left: 4px solid #c62828;
+      border-radius: 0 6px 6px 0;
+      padding: 0.7rem 1rem;
+      font-size: 0.9rem;
+      color: #b71c1c;
+    }
+    #error-box code { background: #f5c6c0; padding: 0.1em 0.35em; border-radius: 3px; font-size: 0.87em; }
+
+    /* ── Result card ── */
+    #result-card {
+      display: none;
+      margin-top: 2rem;
+      background: white;
+      border-radius: 16px;
+      border: 1px solid #d0dce8;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      padding: 2rem;
+      text-align: center;
+      max-width: 440px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .pet-emoji { font-size: 5rem; display: block; line-height: 1; margin-bottom: 0.5rem; }
+    .pet-type { font-size: 2rem; font-weight: 800; color: #1a3a5c; margin: 0 0 0.25rem; }
+    .adopt-badge {
+      display: inline-block;
+      background: #d4edda;
+      color: #155724;
+      font-size: 0.9rem;
+      font-weight: 700;
+      padding: 0.3rem 0.9rem;
+      border-radius: 20px;
+      margin-bottom: 1.2rem;
+    }
+    .confidence-label { font-size: 0.88rem; color: #555; margin-bottom: 0.3rem; text-align: left; }
+    .confidence-bar-bg {
+      background: #e8eef4;
+      border-radius: 8px;
+      height: 12px;
+      overflow: hidden;
+      margin-bottom: 0.3rem;
+    }
+    .confidence-bar-fill {
+      height: 100%;
+      border-radius: 8px;
+      background: linear-gradient(90deg, #2e6da4, #1a3a5c);
+      transition: width 0.6s ease;
+    }
+    .confidence-pct { font-size: 1rem; font-weight: 700; color: #1a3a5c; text-align: right; margin-bottom: 1rem; }
+    .latency-badge {
+      display: inline-block;
+      background: #eef2f7;
+      color: #444;
+      font-size: 0.8rem;
+      padding: 0.2rem 0.7rem;
+      border-radius: 20px;
+      margin-bottom: 1.2rem;
+    }
+    .card-actions { display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap; margin-top: 0.5rem; }
+    #reset-btn {
+      padding: 0.5rem 1.4rem;
+      border: 1.5px solid #2e6da4;
+      border-radius: 6px;
+      background: white;
+      color: #2e6da4;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 0.92rem;
+    }
+    #reset-btn:hover { background: #f0f6ff; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="container">
+      <h1>🐾 PawFinder</h1>
+      <p class="subtitle">Find your perfect companion — AI-powered pet identification</p>
+    </div>
+  </header>
+
+  <main class="container" style="max-width: 600px; padding-top: 2rem; padding-bottom: 3rem;">
+
+    <div class="prereq">
+      Requires the API stack running locally —
+      <code>docker compose up -d</code>
+      &nbsp;·&nbsp; API: <code>http://localhost:8000</code>
+    </div>
+
+    <!-- Upload zone -->
+    <div class="upload-zone" id="upload-zone">
+      <input type="file" id="file-input" accept="image/*" />
+      <span class="icon">📷</span>
+      <p>Click to upload or drag a photo here</p>
+      <small>JPG, PNG, WebP — any pet photo</small>
+    </div>
+
+    <!-- Preview -->
+    <div id="preview-wrap">
+      <img id="preview-img" src="" alt="Preview" />
+      <div id="preview-name"></div>
+    </div>
+
+    <!-- Identify button -->
+    <button id="identify-btn" disabled>Identify Pet</button>
+
+    <!-- Error -->
+    <div id="error-box"></div>
+
+    <!-- Result card -->
+    <div id="result-card">
+      <span class="pet-emoji" id="pet-emoji"></span>
+      <p class="pet-type" id="pet-type"></p>
+      <span class="adopt-badge">Available for Adoption ❤</span>
+      <div class="confidence-label">AI Confidence</div>
+      <div class="confidence-bar-bg">
+        <div class="confidence-bar-fill" id="conf-bar" style="width: 0%"></div>
+      </div>
+      <div class="confidence-pct" id="conf-pct"></div>
+      <div><span class="latency-badge" id="latency-badge"></span></div>
+      <div class="card-actions">
+        <a href="#" class="btn btn-primary" style="font-size:0.92rem; padding:0.5rem 1.4rem;">Find More Pets Like This →</a>
+        <button id="reset-btn">Try Another Photo</button>
+      </div>
+    </div>
+
+  </main>
+
+  <footer>
+    <div class="container">
+      <p>
+        Powered by SimpleCNN &nbsp;·&nbsp; MLOps Assignment 2 &nbsp;·&nbsp; 2024ac05041
+        &nbsp;·&nbsp; <a href="index.html" style="color:rgba(255,255,255,0.7);">Project Report</a>
+      </p>
+    </div>
+  </footer>
+
+  <script>
+    const API = 'http://localhost:8000';
+    const zone     = document.getElementById('upload-zone');
+    const fileInput = document.getElementById('file-input');
+    const previewWrap = document.getElementById('preview-wrap');
+    const previewImg  = document.getElementById('preview-img');
+    const previewName = document.getElementById('preview-name');
+    const identifyBtn = document.getElementById('identify-btn');
+    const errorBox    = document.getElementById('error-box');
+    const resultCard  = document.getElementById('result-card');
+    const resetBtn    = document.getElementById('reset-btn');
+
+    let selectedFile = null;
+
+    // Drag-and-drop
+    zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
+    zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+    zone.addEventListener('drop', e => {
+      e.preventDefault();
+      zone.classList.remove('drag-over');
+      const file = e.dataTransfer.files[0];
+      if (file) setFile(file);
+    });
+
+    fileInput.addEventListener('change', () => {
+      if (fileInput.files[0]) setFile(fileInput.files[0]);
+    });
+
+    function setFile(file) {
+      selectedFile = file;
+      previewImg.src = URL.createObjectURL(file);
+      previewName.textContent = file.name;
+      previewWrap.style.display = 'block';
+      identifyBtn.disabled = false;
+      hideError();
+      resultCard.style.display = 'none';
+    }
+
+    identifyBtn.addEventListener('click', async () => {
+      if (!selectedFile) return;
+      identifyBtn.disabled = true;
+      identifyBtn.classList.add('loading');
+      identifyBtn.textContent = 'Identifying…';
+      hideError();
+      resultCard.style.display = 'none';
+
+      const form = new FormData();
+      form.append('file', selectedFile);
+
+      try {
+        const res = await fetch(`${API}/predict`, { method: 'POST', body: form });
+        if (!res.ok) throw new Error(`API returned ${res.status}`);
+        const data = await res.json();
+        showResult(data);
+      } catch (err) {
+        showError(err);
+      } finally {
+        identifyBtn.disabled = false;
+        identifyBtn.classList.remove('loading');
+        identifyBtn.textContent = 'Identify Pet';
+      }
+    });
+
+    function showResult(data) {
+      const label = data.label;         // "cat" or "dog"
+      const pct   = Math.round(data.probability * 100);
+      const ms    = data.inference_time_ms.toFixed(1);
+
+      document.getElementById('pet-emoji').textContent = label === 'cat' ? '🐱' : '🐶';
+      document.getElementById('pet-type').textContent  = label === 'cat' ? 'Cat' : 'Dog';
+      document.getElementById('conf-bar').style.width  = `${pct}%`;
+      document.getElementById('conf-pct').textContent  = `${pct}%`;
+      document.getElementById('latency-badge').textContent = `Identified in ${ms} ms`;
+
+      resultCard.style.display = 'block';
+      resultCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    function showError(err) {
+      errorBox.innerHTML = `Could not reach the API. Make sure the stack is running: <code>docker compose up -d</code><br><small>${err.message}</small>`;
+      errorBox.style.display = 'block';
+    }
+
+    function hideError() { errorBox.style.display = 'none'; }
+
+    resetBtn.addEventListener('click', () => {
+      selectedFile = null;
+      fileInput.value = '';
+      previewWrap.style.display = 'none';
+      previewImg.src = '';
+      previewName.textContent = '';
+      identifyBtn.disabled = true;
+      resultCard.style.display = 'none';
+      hideError();
+    });
+  </script>
+
+</body>
+</html>
