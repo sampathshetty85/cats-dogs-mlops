@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MLOps Assignment 2 — Cats vs Dogs Pipeline</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <div class="container">
+      <h1>MLOps Assignment 2</h1>
+      <p class="subtitle">End-to-End MLOps Pipeline — Binary Image Classification (Cats vs Dogs)</p>
+      <p class="meta">Sampath Kumar S Shetty &nbsp;|&nbsp; ID: 2024ac05041 &nbsp;|&nbsp; AIMLCZG523 S1-25</p>
+    </div>
+  </header>
+
+  <main class="container">
+
+    <section class="links-bar">
+      <a href="https://github.com/sampathshetty85/cats-dogs-mlops" class="btn btn-primary" target="_blank">GitHub Repo</a>
+      <a href="https://github.com/sampathshetty85/cats-dogs-mlops/pkgs/container/cats-dogs-mlops" class="btn btn-secondary" target="_blank">Docker Image</a>
+      <a href="https://github.com/sampathshetty85/cats-dogs-mlops/actions/workflows/ci.yml" class="btn btn-secondary" target="_blank">CI Status</a>
+      <a href="report.pdf" class="btn btn-accent" target="_blank">Full Report (PDF)</a>
+    </section>
+
+    <section>
+      <h2>Pipeline Overview</h2>
+      <div class="pipeline">
+        <div class="step"><span class="num">1</span><strong>Download</strong><br/>Kaggle dataset<br/>~25k images</div>
+        <div class="arrow">→</div>
+        <div class="step"><span class="num">2</span><strong>Preprocess</strong><br/>224×224, split<br/>80 / 10 / 10</div>
+        <div class="arrow">→</div>
+        <div class="step"><span class="num">3</span><strong>Train</strong><br/>SimpleCNN<br/>5 epochs</div>
+        <div class="arrow">→</div>
+        <div class="step"><span class="num">4</span><strong>Track</strong><br/>MLflow<br/>experiments</div>
+        <div class="arrow">→</div>
+        <div class="step"><span class="num">5</span><strong>API</strong><br/>FastAPI<br/>/predict</div>
+        <div class="arrow">→</div>
+        <div class="step"><span class="num">6</span><strong>Docker</strong><br/>ghcr.io<br/>multi-arch</div>
+        <div class="arrow">→</div>
+        <div class="step"><span class="num">7</span><strong>CI/CD</strong><br/>GitHub Actions<br/>test + deploy</div>
+        <div class="arrow">→</div>
+        <div class="step"><span class="num">8</span><strong>Monitor</strong><br/>Prometheus<br/>+ Grafana</div>
+      </div>
+    </section>
+
+    <section class="grid-2">
+      <div class="card">
+        <h3>Model</h3>
+        <table>
+          <tr><td>Architecture</td><td>SimpleCNN (custom PyTorch)</td></tr>
+          <tr><td>Epochs</td><td>5</td></tr>
+          <tr><td>Optimizer</td><td>Adam (lr=0.001)</td></tr>
+          <tr><td>Validation accuracy</td><td>~82.7%</td></tr>
+          <tr><td>Post-deploy accuracy</td><td>86.0% (50 images)</td></tr>
+          <tr><td>Avg inference latency</td><td>~21 ms</td></tr>
+        </table>
+      </div>
+      <div class="card">
+        <h3>Infrastructure</h3>
+        <table>
+          <tr><td>Container registry</td><td>ghcr.io (linux/amd64 + arm64)</td></tr>
+          <tr><td>CI runner</td><td>GitHub Actions ubuntu-latest</td></tr>
+          <tr><td>Deployment</td><td>Docker Compose + Kubernetes</td></tr>
+          <tr><td>Prometheus scrape interval</td><td>15s</td></tr>
+          <tr><td>Grafana</td><td>v11.1.0, 4-panel dashboard</td></tr>
+          <tr><td>Docker image size</td><td>448.8 MB (python:3.12-slim)</td></tr>
+        </table>
+      </div>
+    </section>
+
+    <section>
+      <h2>Quick Start</h2>
+      <pre><code>git clone https://github.com/sampathshetty85/cats-dogs-mlops
+cd cats-dogs-mlops
+docker compose up -d
+
+# Health check
+curl http://localhost:8000/health
+
+# Predict
+curl -F "file=@tests/fixtures/sample_cat.jpg" http://localhost:8000/predict
+
+# Grafana dashboard
+open http://localhost:3000   # login: admin / admin</code></pre>
+    </section>
+
+    <section>
+      <h2>API Endpoints</h2>
+      <div class="grid-3">
+        <div class="endpoint">
+          <span class="method get">GET</span>
+          <code>/health</code>
+          <p>Returns <code>{"status":"ok","model":"SimpleCNN"}</code></p>
+        </div>
+        <div class="endpoint">
+          <span class="method post">POST</span>
+          <code>/predict</code>
+          <p>Multipart image → <code>{"label":"cat","probability":0.87,"inference_time_ms":14.2}</code></p>
+        </div>
+        <div class="endpoint">
+          <span class="method get">GET</span>
+          <code>/metrics</code>
+          <p>Prometheus metrics: request rate, latency histogram, prediction counts</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Training Results</h2>
+      <div class="screenshots">
+        <figure>
+          <img src="../screenshots/training/loss_curves.png" alt="Loss and accuracy curves" />
+          <figcaption>Training &amp; validation loss / accuracy over 5 epochs</figcaption>
+        </figure>
+        <figure>
+          <img src="../screenshots/training/confusion_matrix.png" alt="Confusion matrix" />
+          <figcaption>Confusion matrix on validation set</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section>
+      <h2>CI/CD</h2>
+      <p>
+        Every push to <code>main</code> triggers the CI workflow: lint (flake8) → unit tests (7 tests) →
+        Docker build (multi-arch) → push to ghcr.io. On a successful push, the CD workflow pulls the new
+        image, starts the stack, and runs the smoke test against <code>/health</code> and <code>/predict</code>.
+      </p>
+      <img src="https://github.com/sampathshetty85/cats-dogs-mlops/actions/workflows/ci.yml/badge.svg" alt="CI badge" />
+    </section>
+
+  </main>
+
+  <footer>
+    <div class="container">
+      <p>BITS Pilani M.Tech AI/ML &nbsp;·&nbsp; MLOps (AIMLCZG523) &nbsp;·&nbsp; 2024ac05041</p>
+    </div>
+  </footer>
+</body>
+</html>

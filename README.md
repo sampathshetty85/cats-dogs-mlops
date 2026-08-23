@@ -68,6 +68,11 @@ docker compose up -d              # evaluator: pull ghcr.io image + start stack
 
 ## Links
 
-- GitHub: https://github.com/sampathshetty85/cats-dogs-mlops
-- Docker image: `ghcr.io/sampathshetty85/cats-dogs-mlops:latest`
-- MLflow: run `mlflow ui` from project root to view experiment runs
+| Resource | URL |
+|----------|-----|
+| GitHub | https://github.com/sampathshetty85/cats-dogs-mlops |
+| Docker image | `ghcr.io/sampathshetty85/cats-dogs-mlops:latest` |
+| GitHub Pages | https://sampathshetty85.github.io/cats-dogs-mlops/ |
+| PDF Report | https://sampathshetty85.github.io/cats-dogs-mlops/report.pdf |
+| Demo Video | *(add YouTube link after recording)* |
+| MLflow | run `mlflow ui` from project root |

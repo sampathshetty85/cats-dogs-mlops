@@ -1,0 +1,156 @@
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: #f5f7fa;
+  color: #222;
+  line-height: 1.6;
+}
+
+.container { max-width: 1100px; margin: 0 auto; padding: 0 1.5rem; }
+
+/* Header */
+header {
+  background: linear-gradient(135deg, #1a3a5c 0%, #2e6da4 100%);
+  color: white;
+  padding: 3rem 0 2rem;
+  text-align: center;
+}
+header h1 { font-size: 2.2rem; margin-bottom: 0.4rem; }
+header .subtitle { font-size: 1.1rem; opacity: 0.9; margin-bottom: 0.5rem; }
+header .meta { font-size: 0.9rem; opacity: 0.75; }
+
+/* Main */
+main { padding: 2rem 0 3rem; }
+section { margin-bottom: 2.5rem; }
+section h2 {
+  font-size: 1.4rem;
+  color: #1a3a5c;
+  border-bottom: 2px solid #2e6da4;
+  padding-bottom: 0.4rem;
+  margin-bottom: 1rem;
+}
+
+/* Links bar */
+.links-bar { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-bottom: 2rem; }
+.btn {
+  display: inline-block;
+  padding: 0.55rem 1.2rem;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: opacity 0.15s;
+}
+.btn:hover { opacity: 0.85; }
+.btn-primary  { background: #1a3a5c; color: white; }
+.btn-secondary { background: #2e6da4; color: white; }
+.btn-accent   { background: #e05c28; color: white; }
+
+/* Pipeline */
+.pipeline {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+.step {
+  background: white;
+  border: 1px solid #d0dce8;
+  border-radius: 8px;
+  padding: 0.8rem 1rem;
+  text-align: center;
+  font-size: 0.85rem;
+  line-height: 1.4;
+  min-width: 90px;
+}
+.step .num {
+  display: inline-block;
+  background: #2e6da4;
+  color: white;
+  border-radius: 50%;
+  width: 22px;
+  height: 22px;
+  line-height: 22px;
+  font-size: 0.75rem;
+  font-weight: bold;
+  margin-bottom: 0.3rem;
+}
+.arrow { color: #2e6da4; font-size: 1.3rem; font-weight: bold; }
+
+/* Grids */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+@media (max-width: 700px) {
+  .grid-2, .grid-3 { grid-template-columns: 1fr; }
+  .pipeline { flex-direction: column; }
+  .arrow { transform: rotate(90deg); }
+}
+
+/* Cards */
+.card {
+  background: white;
+  border-radius: 8px;
+  border: 1px solid #d0dce8;
+  padding: 1.2rem;
+}
+.card h3 { color: #1a3a5c; margin-bottom: 0.75rem; font-size: 1.1rem; }
+.card table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+.card td { padding: 0.35rem 0.5rem; border-bottom: 1px solid #f0f0f0; vertical-align: top; }
+.card td:first-child { font-weight: 600; width: 55%; color: #444; }
+
+/* Code */
+pre {
+  background: #1e2a38;
+  color: #cdd9e5;
+  border-radius: 8px;
+  padding: 1.2rem 1.5rem;
+  overflow-x: auto;
+  font-size: 0.88rem;
+  line-height: 1.6;
+}
+code { font-family: "SFMono-Regular", Consolas, monospace; }
+p code {
+  background: #eef2f7;
+  padding: 0.1em 0.35em;
+  border-radius: 3px;
+  font-size: 0.87em;
+}
+
+/* Endpoints */
+.endpoint {
+  background: white;
+  border: 1px solid #d0dce8;
+  border-radius: 8px;
+  padding: 1rem;
+}
+.endpoint code { display: block; font-size: 1rem; margin: 0.4rem 0; color: #1a3a5c; font-weight: 600; }
+.endpoint p { font-size: 0.83rem; color: #555; }
+.method {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+  letter-spacing: 0.05em;
+}
+.get  { background: #d4edda; color: #155724; }
+.post { background: #cce5ff; color: #004085; }
+
+/* Screenshots */
+.screenshots { display: flex; flex-wrap: wrap; gap: 1.5rem; justify-content: center; }
+.screenshots figure { text-align: center; max-width: 480px; }
+.screenshots img { max-width: 100%; border-radius: 6px; border: 1px solid #d0dce8; }
+.screenshots figcaption { font-size: 0.82rem; color: #666; margin-top: 0.4rem; }
+
+/* CI badge */
+section img[alt="CI badge"] { margin-top: 0.75rem; display: block; }
+
+/* Footer */
+footer {
+  background: #1a3a5c;
+  color: rgba(255,255,255,0.7);
+  text-align: center;
+  padding: 1.2rem 0;
+  font-size: 0.88rem;
+}
