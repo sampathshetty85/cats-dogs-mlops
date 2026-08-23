@@ -1,0 +1,32 @@
+# Report: step_9_ci
+# Generated: 2026-08-22T15:37:00Z
+#------------------------------------------------------------
+
+CI Tool      : GitHub Actions
+Workflow     : .github/workflows/ci.yml
+Trigger      : push + pull_request on all branches
+
+Jobs:
+  test        → lint (flake8 src/ tests/ --max-line-length=120) + pytest tests/ -v
+  build-push  → needs: test; builds Docker image on every push; pushes to ghcr.io on main only
+
+Test results (7 tests, all PASS):
+  tests/test_preprocess.py::test_resize_output_shape          PASSED
+  tests/test_preprocess.py::test_normalize_range              PASSED
+  tests/test_preprocess.py::test_augmentation_preserves_shape PASSED
+  tests/test_inference.py::test_model_output_range            PASSED
+  tests/test_inference.py::test_model_output_shape            PASSED
+  tests/test_inference.py::test_health_endpoint               PASSED
+  tests/test_inference.py::test_predict_endpoint              PASSED
+
+Lint: flake8 — 0 errors
+
+CI run ID    : 32581112241
+Duration     : 7m 42s
+Status       : SUCCESS
+
+Docker image pushed:
+  ghcr.io/sampathshetty85/cats-dogs-mlops:latest
+  ghcr.io/sampathshetty85/cats-dogs-mlops:<sha>
+
+CI badge: https://github.com/sampathshetty85/cats-dogs-mlops/actions/workflows/ci.yml/badge.svg

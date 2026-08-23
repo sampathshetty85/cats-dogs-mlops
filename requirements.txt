@@ -21,6 +21,8 @@ prometheus-client==0.21.1
 
 # Utilities
 numpy==1.26.4
+scikit-learn==1.9.0
+matplotlib==3.11.1
 
 # Report generation
 reportlab==4.2.2
