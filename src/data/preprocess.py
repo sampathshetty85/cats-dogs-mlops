@@ -6,27 +6,27 @@ from PIL import Image
 from torchvision import transforms
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
+from src.config import IMAGE_SIZE, IMAGE_EXTENSIONS, IMAGENET_MEAN, IMAGENET_STD, CLASSES  # noqa: E402
 from src.report_writer import write_report  # noqa: E402
 
 RAW_DIR = os.path.join(os.path.dirname(__file__), "..", "..", "data", "raw", "PetImages")
 PROCESSED_DIR = os.path.join(os.path.dirname(__file__), "..", "..", "data", "processed")
-CLASSES = {"Cat": "cat", "Dog": "dog"}
 SPLITS = {"train": 0.8, "val": 0.1, "test": 0.1}
 SEED = 42
 
 TRAIN_TRANSFORMS = transforms.Compose([
-    transforms.Resize((224, 224)),
+    transforms.Resize((IMAGE_SIZE, IMAGE_SIZE)),
     transforms.RandomHorizontalFlip(),
     transforms.RandomRotation(10),
     transforms.ColorJitter(brightness=0.2, contrast=0.2),
     transforms.ToTensor(),
-    transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),
+    transforms.Normalize(IMAGENET_MEAN, IMAGENET_STD),
 ])
 
 EVAL_TRANSFORMS = transforms.Compose([
-    transforms.Resize((224, 224)),
+    transforms.Resize((IMAGE_SIZE, IMAGE_SIZE)),
     transforms.ToTensor(),
-    transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),
+    transforms.Normalize(IMAGENET_MEAN, IMAGENET_STD),
 ])
 
 
@@ -35,7 +35,7 @@ def load_valid_images(class_dir: str) -> tuple[list, int]:
     corrupt = 0
     for fname in sorted(os.listdir(class_dir)):
         fpath = os.path.join(class_dir, fname)
-        if not fname.lower().endswith((".jpg", ".jpeg", ".png")):
+        if not fname.lower().endswith(IMAGE_EXTENSIONS):
             continue
         try:
             with Image.open(fpath) as img:
@@ -63,12 +63,11 @@ def split_files(files: list, seed: int = SEED) -> dict:
 def resize_and_save(src_path: str, dst_path: str):
     with Image.open(src_path) as img:
         img = img.convert("RGB")
-        img = img.resize((224, 224), Image.LANCZOS)
+        img = img.resize((IMAGE_SIZE, IMAGE_SIZE), Image.LANCZOS)
         img.save(dst_path, "JPEG", quality=95)
 
 
 def main():
-    random.seed(SEED)
     corrupt_counts = {}
     split_counts = {split: {cls: 0 for cls in CLASSES.values()} for split in SPLITS}
 

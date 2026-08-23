@@ -41,7 +41,7 @@ uvicorn src.api.main:app --reload
 docker compose up -d
 
 # View MLflow experiment runs
-mlflow ui   # open http://127.0.0.1:5000
+mlflow ui --port 5001   # open http://127.0.0.1:5001  (port 5000 is taken by macOS AirPlay)
 
 # Generate PDF report
 python docs/generate_report.py

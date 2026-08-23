@@ -15,6 +15,7 @@ from prometheus_fastapi_instrumentator import Instrumentator
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 from src.api.schemas import PredictionResponse  # noqa: E402
+from src.config import MODEL_PATH  # noqa: E402
 from src.data.preprocess import EVAL_TRANSFORMS  # noqa: E402
 from src.model.architecture import SimpleCNN  # noqa: E402
 from src.report_writer import write_report  # noqa: E402
@@ -22,8 +23,13 @@ from src.report_writer import write_report  # noqa: E402
 logging.basicConfig(level=logging.INFO, format="%(message)s")
 logger = logging.getLogger(__name__)
 
-REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
-MODEL_PATH = os.path.join(REPO_ROOT, "models", "cats_dogs_cnn.pt")
+
+def get_device():
+    if torch.backends.mps.is_available():
+        return torch.device("mps")
+    if torch.cuda.is_available():
+        return torch.device("cuda")
+    return torch.device("cpu")
 
 PREDICTION_COUNTER = Counter(
     "cats_dogs_predictions_total",
@@ -32,6 +38,7 @@ PREDICTION_COUNTER = Counter(
 )
 
 _model: SimpleCNN | None = None
+_device: torch.device | None = None
 
 
 def _get_model() -> SimpleCNN:
@@ -42,16 +49,17 @@ def _get_model() -> SimpleCNN:
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    global _model
-    device = torch.device("cpu")
-    model = SimpleCNN().to(device)
-    state = torch.load(MODEL_PATH, map_location=device, weights_only=True)
+    global _model, _device
+    _device = get_device()
+    model = SimpleCNN().to(_device)
+    state = torch.load(MODEL_PATH, map_location=_device, weights_only=True)
     model.load_state_dict(state)
     model.eval()
     _model = model
-    logger.info(f"[api] Model loaded from {MODEL_PATH}")
+    logger.info(f"[api] Model loaded from {MODEL_PATH} on {_device}")
     yield
     _model = None
+    _device = None
 
 
 app = FastAPI(
@@ -86,7 +94,7 @@ async def predict(file: UploadFile = File(...)):
     except Exception:
         raise HTTPException(status_code=400, detail="Cannot decode image")
 
-    tensor = EVAL_TRANSFORMS(img).unsqueeze(0)
+    tensor = EVAL_TRANSFORMS(img).unsqueeze(0).to(_device)
 
     model = _get_model()
     with torch.no_grad():

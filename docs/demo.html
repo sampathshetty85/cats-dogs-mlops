@@ -365,19 +365,19 @@ python scripts/batch_eval.py</code></pre>
       <h2>CI/CD &amp; Monitoring Links</h2>
       <p style="font-size:0.88rem;color:#555;margin-bottom:1.2rem;">All services run locally via <code>docker compose up -d</code>. CI/CD runs on GitHub.</p>
       <div class="link-grid">
-        <a class="link-card" href="http://127.0.0.1:5000" target="_blank">
+        <a class="link-card" href="http://127.0.0.1:5001/#/experiments/700585779634979131" target="_blank">
           <span class="lc-icon">🧪</span>
           <span class="lc-title">MLflow UI</span>
-          <span class="lc-desc">Experiment runs, parameters, metrics, loss curves, confusion matrix artifacts. Run <code>mlflow ui</code> first.</span>
-          <span class="lc-url">127.0.0.1:5000</span>
+          <span class="lc-desc">Experiment runs, parameters, metrics, loss curves, confusion matrix artifacts. Run <code>mlflow ui --port 5001</code> first.</span>
+          <span class="lc-url">127.0.0.1:5001</span>
         </a>
-        <a class="link-card" href="http://localhost:3000" target="_blank">
+        <a class="link-card" href="http://localhost:3000/d/cats-dogs-api" target="_blank">
           <span class="lc-icon">📊</span>
           <span class="lc-title">Grafana Dashboard</span>
           <span class="lc-desc">Request rate, latency P50/P95, prediction distribution, error rate</span>
           <span class="lc-url">localhost:3000 (admin / admin)</span>
         </a>
-        <a class="link-card" href="http://localhost:9090" target="_blank">
+        <a class="link-card" href="http://localhost:9090/targets" target="_blank">
           <span class="lc-icon">🔥</span>
           <span class="lc-title">Prometheus</span>
           <span class="lc-desc">Raw metrics, targets, query console</span>

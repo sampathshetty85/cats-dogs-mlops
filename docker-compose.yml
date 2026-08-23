@@ -1,6 +1,7 @@
 services:
   api:
     image: ghcr.io/sampathshetty85/cats-dogs-mlops:latest
+    pull_policy: if_not_present
     platform: linux/amd64
     ports:
       - "8000:8000"

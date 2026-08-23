@@ -479,7 +479,7 @@ def conclusion() -> list:
                 ["Post-deploy accuracy", "86.0% (50 test images)"],
                 ["Post-deploy precision (cat)", "84.6%"],
                 ["Post-deploy recall (cat)", "88.0%"],
-                ["API avg latency", "~21 ms"],
+                ["API avg latency", "~14 ms"],
                 ["Docker image size", "448.8 MB (python:3.12-slim)"],
                 ["CI runtime", "~14 min (lint + test + multi-arch Docker build)"],
                 ["CD runtime", "~2 min (pull + start + smoke test)"],

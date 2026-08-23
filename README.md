@@ -33,11 +33,10 @@ open http://localhost:3000   # Grafana dashboard (admin / admin)
 cats-dogs-mlops/
 ├── src/
 │   ├── data/         # download.py, preprocess.py
-│   ├── model/        # architecture.py, train.py, package.py
+│   ├── model/        # architecture.py, train.py
 │   └── api/          # main.py, schemas.py
 ├── tests/            # pytest unit tests + fixtures
 ├── scripts/          # smoke_test.sh, batch_eval.py
-├── notebooks/        # 01_eda.ipynb
 ├── monitoring/       # prometheus.yml, grafana dashboards
 ├── k8s/              # deployment.yaml, service.yaml
 ├── docs/             # report.pdf, GitHub Pages
@@ -74,5 +73,4 @@ docker compose up -d              # evaluator: pull ghcr.io image + start stack
 | Docker image | `ghcr.io/sampathshetty85/cats-dogs-mlops:latest` |
 | GitHub Pages | https://sampathshetty85.github.io/cats-dogs-mlops/ |
 | PDF Report | https://sampathshetty85.github.io/cats-dogs-mlops/report.pdf |
-| Demo Video | *(add YouTube link after recording)* |
-| MLflow | run `mlflow ui` from project root |
+| MLflow | run `mlflow ui --port 5001` from project root |

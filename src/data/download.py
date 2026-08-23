@@ -3,12 +3,12 @@ import subprocess
 import sys
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
+from src.config import CLASSES, IMAGE_EXTENSIONS  # noqa: E402
 from src.report_writer import write_report  # noqa: E402
 
 KAGGLE_JSON = os.path.expanduser("~/.kaggle/kaggle.json")
 DATASET = "shaunthesheep/microsoft-catsvsdogs-dataset"
 RAW_DIR = os.path.join(os.path.dirname(__file__), "..", "..", "data", "raw")
-CLASSES = ["Cat", "Dog"]
 
 
 def check_credentials():
@@ -40,7 +40,7 @@ def count_images(raw_dir: str) -> dict:
             continue
         counts[cls] = sum(
             1 for f in os.listdir(cls_dir)
-            if f.lower().endswith((".jpg", ".jpeg", ".png"))
+            if f.lower().endswith(IMAGE_EXTENSIONS)
         )
     return counts
 

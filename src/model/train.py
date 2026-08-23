@@ -13,13 +13,13 @@ import mlflow  # noqa: E402
 import mlflow.pytorch  # noqa: E402
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
+from src.config import MODEL_PATH, IMAGE_SIZE  # noqa: E402
 from src.model.architecture import SimpleCNN  # noqa: E402
 from src.data.preprocess import TRAIN_TRANSFORMS, EVAL_TRANSFORMS  # noqa: E402
 from src.report_writer import write_report  # noqa: E402
 
 REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 PROCESSED_DIR = os.path.join(REPO_ROOT, "data", "processed")
-MODEL_PATH = os.path.join(REPO_ROOT, "models", "cats_dogs_cnn.pt")
 SCREENSHOTS_DIR = os.path.join(REPO_ROOT, "screenshots", "training")
 
 EPOCHS = 5
@@ -65,8 +65,8 @@ def run_epoch(model, loader, criterion, optimizer, device, training: bool):
 
 def save_curves(train_losses, val_losses, train_accs, val_accs):
     os.makedirs(SCREENSHOTS_DIR, exist_ok=True)
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 5))
     plt.style.use("seaborn-v0_8-whitegrid")
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 5))
     epochs = range(1, EPOCHS + 1)
 
     ax1.plot(epochs, train_losses, label="Train Loss")
@@ -133,7 +133,7 @@ def main():
 
     train_losses, val_losses, train_accs, val_accs = [], [], [], []
 
-    with mlflow.start_run(run_name="SimpleCNN_5ep") as run:
+    with mlflow.start_run(run_name=f"SimpleCNN_{EPOCHS}ep") as run:
         mlflow.log_params({
             "architecture": "SimpleCNN",
             "epochs": EPOCHS,
@@ -143,7 +143,7 @@ def main():
             "loss_fn": "BCELoss",
             "train_samples": len(train_loader.dataset),
             "val_samples": len(val_loader.dataset),
-            "image_size": 224,
+            "image_size": IMAGE_SIZE,
             "augmentations": "RandomHorizontalFlip,RandomRotation(10),ColorJitter(0.2,0.2)",
         })
 
@@ -171,11 +171,12 @@ def main():
         torch.save(model.state_dict(), MODEL_PATH)
         print(f"[train] Model saved → {MODEL_PATH}")
 
-        sample_input = torch.randn(1, 3, 224, 224)
+        model.cpu()
+        sample_input = torch.randn(1, 3, IMAGE_SIZE, IMAGE_SIZE)
         with torch.no_grad():
-            sample_output = model.cpu()(sample_input)
+            sample_output = model(sample_input)
         signature = mlflow.models.infer_signature(sample_input.numpy(), sample_output.numpy())
-        mlflow.pytorch.log_model(model.cpu(), "model", signature=signature, input_example=sample_input.numpy())
+        mlflow.pytorch.log_model(model, "model", signature=signature, input_example=sample_input.numpy())
         mlflow.set_tag("best_model", "true")
 
         run_id = run.info.run_id
@@ -193,7 +194,7 @@ def main():
         "",
         "Per-epoch metrics:",
     ]
-    for i, (tl, ta, vl, va) in enumerate(zip(train_losses, val_losses, train_accs, val_accs), 1):
+    for i, (tl, ta, vl, va) in enumerate(zip(train_losses, train_accs, val_losses, val_accs), 1):
         train_report.append(
             f"  Epoch {i}: train_loss={tl:.4f}  train_acc={ta:.4f}"
             f"  val_loss={vl:.4f}  val_acc={va:.4f}"
@@ -209,13 +210,13 @@ def main():
 
     mlflow_report = [
         "Experiment   : cats-dogs-classification",
-        "Run name     : SimpleCNN_5ep",
+        f"Run name     : SimpleCNN_{EPOCHS}ep",
         f"Run ID       : {run_id}",
         f"Tracking URI : {os.path.join(REPO_ROOT, 'mlruns')}",
         "",
         "Logged parameters:",
         f"  architecture={SimpleCNN.__name__}, epochs={EPOCHS}, batch_size={BATCH_SIZE}, lr={LR}",
-        "  optimizer=Adam, loss_fn=BCELoss, image_size=224",
+        f"  optimizer=Adam, loss_fn=BCELoss, image_size={IMAGE_SIZE}",
         "",
         "Final epoch metrics:",
         f"  train_loss={train_losses[-1]:.4f}  train_acc={train_accs[-1]:.4f}",
