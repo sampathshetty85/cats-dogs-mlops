@@ -5,6 +5,8 @@
 
 [![CI](https://github.com/sampathshetty85/cats-dogs-mlops/actions/workflows/ci.yml/badge.svg)](https://github.com/sampathshetty85/cats-dogs-mlops/actions/workflows/ci.yml)
 
+> **Live Demo:** https://sampathshetty85.github.io/cats-dogs-mlops/demo.html
+
 ---
 
 ## Overview
