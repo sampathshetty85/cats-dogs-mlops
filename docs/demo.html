@@ -3,218 +3,475 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PawFinder — Find Your Perfect Companion</title>
+  <title>PawFinder — AI Pet Adoption Platform</title>
   <link rel="stylesheet" href="style.css" />
   <style>
-    /* ── Page overrides ── */
-    header { padding: 2rem 0 1.5rem; }
-    header h1 { font-size: 2rem; }
+    /* ── Reset / base ── */
+    html { scroll-behavior: smooth; }
 
-    .prereq {
-      background: #fff8e1;
-      border-left: 4px solid #f9a825;
-      border-radius: 0 6px 6px 0;
-      padding: 0.6rem 1rem;
-      font-size: 0.88rem;
-      color: #555;
-      margin-bottom: 1.5rem;
+    /* ── Nav ── */
+    .topnav {
+      position: sticky; top: 0; z-index: 100;
+      background: #1a3a5c;
+      display: flex; align-items: center; gap: 0;
+      padding: 0 1.5rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.25);
     }
+    .topnav .brand { color: white; font-weight: 800; font-size: 1.05rem; padding: 0.75rem 1rem 0.75rem 0; margin-right: auto; text-decoration: none; }
+    .topnav a { color: rgba(255,255,255,0.75); font-size: 0.85rem; padding: 0.75rem 0.75rem; text-decoration: none; transition: color 0.15s; white-space: nowrap; }
+    .topnav a:hover { color: white; }
+
+    /* ── Hero ── */
+    .hero { background: linear-gradient(135deg, #1a3a5c 0%, #2e6da4 100%); color: white; padding: 3.5rem 0 2.5rem; text-align: center; }
+    .hero h1 { font-size: 2.5rem; margin-bottom: 0.5rem; }
+    .hero .sub { font-size: 1.1rem; opacity: 0.88; margin-bottom: 1.5rem; }
+    .hero .badges { display: flex; flex-wrap: wrap; gap: 0.6rem; justify-content: center; }
+    .badge-pill { display: inline-block; background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.25); border-radius: 20px; padding: 0.25rem 0.85rem; font-size: 0.82rem; }
+
+    /* ── Section wrapper ── */
+    section.page-section { padding: 3rem 0; border-bottom: 1px solid #e8eef4; }
+    section.page-section:last-of-type { border-bottom: none; }
+    section.page-section h2 { font-size: 1.6rem; color: #1a3a5c; border-bottom: 3px solid #2e6da4; padding-bottom: 0.4rem; margin-bottom: 1.5rem; display: inline-block; }
+
+    /* ── Prereq banner ── */
+    .prereq { background: #fff8e1; border-left: 4px solid #f9a825; border-radius: 0 6px 6px 0; padding: 0.6rem 1rem; font-size: 0.88rem; color: #555; margin-bottom: 1.5rem; }
     .prereq code { background: #f0ece0; padding: 0.1em 0.35em; border-radius: 3px; font-size: 0.87em; }
 
     /* ── Upload zone ── */
-    .upload-zone {
-      border: 2.5px dashed #2e6da4;
-      border-radius: 12px;
-      background: #f0f6ff;
-      padding: 3rem 2rem;
-      text-align: center;
-      cursor: pointer;
-      transition: background 0.15s, border-color 0.15s;
-      position: relative;
-    }
+    .upload-zone { border: 2.5px dashed #2e6da4; border-radius: 12px; background: #f0f6ff; padding: 3rem 2rem; text-align: center; cursor: pointer; transition: background 0.15s, border-color 0.15s; position: relative; max-width: 520px; margin: 0 auto; }
     .upload-zone.drag-over { background: #daeaff; border-color: #1a3a5c; }
-    .upload-zone input[type="file"] {
-      position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
-    }
+    .upload-zone input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
     .upload-zone .icon { font-size: 3rem; display: block; margin-bottom: 0.5rem; }
     .upload-zone p { color: #2e6da4; font-size: 1rem; margin: 0; }
     .upload-zone small { color: #888; font-size: 0.82rem; }
 
-    /* ── Preview ── */
     #preview-wrap { margin-top: 1rem; display: none; text-align: center; }
-    #preview-img {
-      max-width: 260px;
-      max-height: 220px;
-      border-radius: 10px;
-      border: 2px solid #d0dce8;
-      object-fit: cover;
-    }
+    #preview-img { max-width: 240px; max-height: 200px; border-radius: 10px; border: 2px solid #d0dce8; object-fit: cover; }
     #preview-name { font-size: 0.82rem; color: #888; margin-top: 0.3rem; }
 
-    /* ── Identify button ── */
-    #identify-btn {
-      display: block;
-      margin: 1.2rem auto 0;
-      padding: 0.75rem 2.5rem;
-      font-size: 1.05rem;
-      border: none;
-      border-radius: 8px;
-      background: #2e6da4;
-      color: white;
-      font-weight: 700;
-      cursor: pointer;
-      transition: background 0.15s, opacity 0.15s;
-    }
+    #identify-btn { display: block; margin: 1.2rem auto 0; padding: 0.75rem 2.5rem; font-size: 1.05rem; border: none; border-radius: 8px; background: #2e6da4; color: white; font-weight: 700; cursor: pointer; transition: background 0.15s, opacity 0.15s; }
     #identify-btn:disabled { opacity: 0.4; cursor: default; }
     #identify-btn:not(:disabled):hover { background: #1a3a5c; }
-    #identify-btn.loading { opacity: 0.7; cursor: wait; }
 
-    /* ── Error ── */
-    #error-box {
-      display: none;
-      margin-top: 1rem;
-      background: #fdecea;
-      border-left: 4px solid #c62828;
-      border-radius: 0 6px 6px 0;
-      padding: 0.7rem 1rem;
-      font-size: 0.9rem;
-      color: #b71c1c;
-    }
+    #error-box { display: none; margin-top: 1rem; background: #fdecea; border-left: 4px solid #c62828; border-radius: 0 6px 6px 0; padding: 0.7rem 1rem; font-size: 0.9rem; color: #b71c1c; max-width: 520px; margin-left: auto; margin-right: auto; }
     #error-box code { background: #f5c6c0; padding: 0.1em 0.35em; border-radius: 3px; font-size: 0.87em; }
 
+    /* ── Pipeline steps (what happens) ── */
+    .pipeline-steps { display: flex; flex-wrap: wrap; justify-content: center; align-items: flex-start; gap: 0; margin: 1.5rem 0; }
+    .ps { display: flex; flex-direction: column; align-items: center; width: 110px; opacity: 0.35; transition: opacity 0.3s; }
+    .ps.active { opacity: 1; }
+    .ps .ps-icon { font-size: 1.8rem; width: 52px; height: 52px; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: #eef2f7; border: 2px solid #d0dce8; transition: background 0.3s, border-color 0.3s; }
+    .ps.active .ps-icon { background: #daeaff; border-color: #2e6da4; }
+    .ps.done .ps-icon { background: #d4edda; border-color: #28a745; opacity: 1; }
+    .ps-label { font-size: 0.75rem; color: #555; text-align: center; margin-top: 0.4rem; line-height: 1.3; }
+    .ps-arrow { font-size: 1.3rem; color: #2e6da4; padding: 0 2px; margin-top: 14px; opacity: 0.4; }
+
     /* ── Result card ── */
-    #result-card {
-      display: none;
-      margin-top: 2rem;
-      background: white;
-      border-radius: 16px;
-      border: 1px solid #d0dce8;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-      padding: 2rem;
-      text-align: center;
-      max-width: 440px;
-      margin-left: auto;
-      margin-right: auto;
-    }
+    #result-card { display: none; margin: 2rem auto 0; background: white; border-radius: 16px; border: 1px solid #d0dce8; box-shadow: 0 4px 20px rgba(0,0,0,0.08); padding: 2rem; text-align: center; max-width: 440px; }
     .pet-emoji { font-size: 5rem; display: block; line-height: 1; margin-bottom: 0.5rem; }
     .pet-type { font-size: 2rem; font-weight: 800; color: #1a3a5c; margin: 0 0 0.25rem; }
-    .adopt-badge {
-      display: inline-block;
-      background: #d4edda;
-      color: #155724;
-      font-size: 0.9rem;
-      font-weight: 700;
-      padding: 0.3rem 0.9rem;
-      border-radius: 20px;
-      margin-bottom: 1.2rem;
-    }
+    .adopt-badge { display: inline-block; background: #d4edda; color: #155724; font-size: 0.9rem; font-weight: 700; padding: 0.3rem 0.9rem; border-radius: 20px; margin-bottom: 1.2rem; }
     .confidence-label { font-size: 0.88rem; color: #555; margin-bottom: 0.3rem; text-align: left; }
-    .confidence-bar-bg {
-      background: #e8eef4;
-      border-radius: 8px;
-      height: 12px;
-      overflow: hidden;
-      margin-bottom: 0.3rem;
-    }
-    .confidence-bar-fill {
-      height: 100%;
-      border-radius: 8px;
-      background: linear-gradient(90deg, #2e6da4, #1a3a5c);
-      transition: width 0.6s ease;
-    }
-    .confidence-pct { font-size: 1rem; font-weight: 700; color: #1a3a5c; text-align: right; margin-bottom: 1rem; }
-    .latency-badge {
-      display: inline-block;
-      background: #eef2f7;
-      color: #444;
-      font-size: 0.8rem;
-      padding: 0.2rem 0.7rem;
-      border-radius: 20px;
-      margin-bottom: 1.2rem;
-    }
+    .confidence-bar-bg { background: #e8eef4; border-radius: 8px; height: 12px; overflow: hidden; margin-bottom: 0.3rem; }
+    .confidence-bar-fill { height: 100%; border-radius: 8px; background: linear-gradient(90deg, #2e6da4, #1a3a5c); transition: width 0.6s ease; }
+    .confidence-pct { font-size: 1rem; font-weight: 700; color: #1a3a5c; text-align: right; margin-bottom: 0.5rem; }
+    .latency-badge { display: inline-block; background: #eef2f7; color: #444; font-size: 0.8rem; padding: 0.2rem 0.7rem; border-radius: 20px; margin-bottom: 1.2rem; }
     .card-actions { display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap; margin-top: 0.5rem; }
-    #reset-btn {
-      padding: 0.5rem 1.4rem;
-      border: 1.5px solid #2e6da4;
-      border-radius: 6px;
-      background: white;
-      color: #2e6da4;
-      font-weight: 600;
-      cursor: pointer;
-      font-size: 0.92rem;
-    }
+    #reset-btn { padding: 0.5rem 1.4rem; border: 1.5px solid #2e6da4; border-radius: 6px; background: white; color: #2e6da4; font-weight: 600; cursor: pointer; font-size: 0.92rem; }
     #reset-btn:hover { background: #f0f6ff; }
+
+    /* ── Info sections ── */
+    .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+    @media (max-width: 700px) { .info-grid { grid-template-columns: 1fr; } .topnav a { display: none; } }
+
+    .info-card { background: white; border-radius: 10px; border: 1px solid #d0dce8; padding: 1.2rem 1.4rem; }
+    .info-card h3 { color: #1a3a5c; font-size: 1rem; margin-bottom: 0.75rem; }
+    .kv { display: flex; gap: 0.5rem; padding: 0.3rem 0; border-bottom: 1px solid #f0f0f0; font-size: 0.88rem; }
+    .kv:last-child { border-bottom: none; }
+    .kv .k { font-weight: 600; color: #444; min-width: 120px; flex-shrink: 0; }
+    .kv .v { color: #222; word-break: break-all; }
+
+    .steps-list { counter-reset: step; list-style: none; padding: 0; }
+    .steps-list li { counter-increment: step; display: flex; gap: 0.75rem; margin-bottom: 0.75rem; font-size: 0.9rem; }
+    .steps-list li::before { content: counter(step); display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; min-width: 24px; background: #2e6da4; color: white; border-radius: 50%; font-size: 0.75rem; font-weight: 700; }
+
+    .link-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; }
+    .link-card { display: flex; flex-direction: column; gap: 0.3rem; background: white; border: 1px solid #d0dce8; border-radius: 10px; padding: 1rem 1.2rem; text-decoration: none; transition: box-shadow 0.15s, border-color 0.15s; }
+    .link-card:hover { box-shadow: 0 4px 14px rgba(0,0,0,0.1); border-color: #2e6da4; }
+    .link-card .lc-icon { font-size: 1.6rem; }
+    .link-card .lc-title { font-weight: 700; color: #1a3a5c; font-size: 0.95rem; }
+    .link-card .lc-desc { font-size: 0.8rem; color: #666; }
+    .link-card .lc-url { font-size: 0.78rem; color: #2e6da4; word-break: break-all; }
+
+    .score-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+    .score-table th { background: #1a3a5c; color: white; padding: 0.55rem 0.75rem; text-align: left; }
+    .score-table td { padding: 0.45rem 0.75rem; border-bottom: 1px solid #f0f0f0; }
+    .score-table tr:nth-child(even) td { background: #f9fafc; }
+    .score-bar-cell { width: 160px; }
+    .score-bar { height: 10px; border-radius: 6px; background: linear-gradient(90deg, #2e6da4, #1a3a5c); }
   </style>
 </head>
 <body>
 
-  <header>
+  <!-- Sticky nav -->
+  <nav class="topnav">
+    <a class="brand" href="#">🐾 PawFinder</a>
+    <a href="#demo">Demo</a>
+    <a href="#how-it-works">How It Works</a>
+    <a href="#about">About</a>
+    <a href="#install">Install</a>
+    <a href="#testing">Testing</a>
+    <a href="#monitoring">Monitoring</a>
+    <a href="#scores">Scores</a>
+    <a href="index.html">Report</a>
+  </nav>
+
+  <!-- Hero -->
+  <div class="hero">
     <div class="container">
       <h1>🐾 PawFinder</h1>
-      <p class="subtitle">Find your perfect companion — AI-powered pet identification</p>
-    </div>
-  </header>
-
-  <main class="container" style="max-width: 600px; padding-top: 2rem; padding-bottom: 3rem;">
-
-    <div class="prereq">
-      Requires the API stack running locally —
-      <code>docker compose up -d</code>
-      &nbsp;·&nbsp; API: <code>http://localhost:8000</code>
-    </div>
-
-    <!-- Upload zone -->
-    <div class="upload-zone" id="upload-zone">
-      <input type="file" id="file-input" accept="image/*" />
-      <span class="icon">📷</span>
-      <p>Click to upload or drag a photo here</p>
-      <small>JPG, PNG, WebP — any pet photo</small>
-    </div>
-
-    <!-- Preview -->
-    <div id="preview-wrap">
-      <img id="preview-img" src="" alt="Preview" />
-      <div id="preview-name"></div>
-    </div>
-
-    <!-- Identify button -->
-    <button id="identify-btn" disabled>Identify Pet</button>
-
-    <!-- Error -->
-    <div id="error-box"></div>
-
-    <!-- Result card -->
-    <div id="result-card">
-      <span class="pet-emoji" id="pet-emoji"></span>
-      <p class="pet-type" id="pet-type"></p>
-      <span class="adopt-badge">Available for Adoption ❤</span>
-      <div class="confidence-label">AI Confidence</div>
-      <div class="confidence-bar-bg">
-        <div class="confidence-bar-fill" id="conf-bar" style="width: 0%"></div>
-      </div>
-      <div class="confidence-pct" id="conf-pct"></div>
-      <div><span class="latency-badge" id="latency-badge"></span></div>
-      <div class="card-actions">
-        <a href="#" class="btn btn-primary" style="font-size:0.92rem; padding:0.5rem 1.4rem;">Find More Pets Like This →</a>
-        <button id="reset-btn">Try Another Photo</button>
+      <p class="sub">AI-powered pet identification for your adoption platform</p>
+      <div class="badges">
+        <span class="badge-pill">SimpleCNN · PyTorch</span>
+        <span class="badge-pill">FastAPI · Docker</span>
+        <span class="badge-pill">86% post-deploy accuracy</span>
+        <span class="badge-pill">~14ms inference</span>
+        <img src="https://github.com/sampathshetty85/cats-dogs-mlops/actions/workflows/ci.yml/badge.svg" alt="CI" style="height:20px; border-radius:4px;" />
       </div>
     </div>
+  </div>
 
-  </main>
+  <!-- ── DEMO ── -->
+  <section class="page-section" id="demo">
+    <div class="container" style="max-width:600px;">
+      <h2>Live Demo</h2>
+      <div class="prereq">
+        Requires the API stack running locally — <code>docker compose up -d</code>
+        &nbsp;·&nbsp; API: <code>http://localhost:8000</code>
+      </div>
+
+      <div class="upload-zone" id="upload-zone">
+        <input type="file" id="file-input" accept="image/*" />
+        <span class="icon">📷</span>
+        <p>Click to upload or drag a photo here</p>
+        <small>JPG, PNG, WebP — any pet photo</small>
+      </div>
+
+      <div id="preview-wrap">
+        <img id="preview-img" src="" alt="Preview" />
+        <div id="preview-name"></div>
+      </div>
+
+      <button id="identify-btn" disabled>Identify Pet</button>
+      <div id="error-box"></div>
+
+      <div id="result-card">
+        <span class="pet-emoji" id="pet-emoji"></span>
+        <p class="pet-type" id="pet-type"></p>
+        <span class="adopt-badge">Available for Adoption ❤</span>
+        <div class="confidence-label">AI Confidence in prediction</div>
+        <div class="confidence-bar-bg">
+          <div class="confidence-bar-fill" id="conf-bar" style="width:0%"></div>
+        </div>
+        <div class="confidence-pct" id="conf-pct"></div>
+        <div><span class="latency-badge" id="latency-badge"></span></div>
+        <div class="card-actions">
+          <a href="#" class="btn btn-primary" style="font-size:0.9rem;padding:0.5rem 1.2rem;">Find More Pets →</a>
+          <button id="reset-btn">Try Another Photo</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── HOW IT WORKS ── -->
+  <section class="page-section" id="how-it-works" style="background:#f5f7fa;">
+    <div class="container" style="max-width:700px;">
+      <h2>What Happens in the Background</h2>
+      <p style="font-size:0.92rem; color:#555; margin-bottom:1.5rem;">
+        When you click <strong>Identify Pet</strong>, these steps execute in under 30ms:
+      </p>
+
+      <div class="pipeline-steps" id="ps-container">
+        <div class="ps" id="ps1">
+          <div class="ps-icon">📤</div>
+          <div class="ps-label">1. Image<br/>uploaded</div>
+        </div>
+        <div class="ps-arrow">→</div>
+        <div class="ps" id="ps2">
+          <div class="ps-icon">🔄</div>
+          <div class="ps-label">2. Resize<br/>224×224</div>
+        </div>
+        <div class="ps-arrow">→</div>
+        <div class="ps" id="ps3">
+          <div class="ps-icon">📐</div>
+          <div class="ps-label">3. Normalize<br/>ImageNet stats</div>
+        </div>
+        <div class="ps-arrow">→</div>
+        <div class="ps" id="ps4">
+          <div class="ps-icon">🧠</div>
+          <div class="ps-label">4. SimpleCNN<br/>forward pass</div>
+        </div>
+        <div class="ps-arrow">→</div>
+        <div class="ps" id="ps5">
+          <div class="ps-icon">⚖️</div>
+          <div class="ps-label">5. Sigmoid<br/>threshold 0.5</div>
+        </div>
+        <div class="ps-arrow">→</div>
+        <div class="ps" id="ps6">
+          <div class="ps-icon">📊</div>
+          <div class="ps-label">6. Metrics<br/>logged</div>
+        </div>
+        <div class="ps-arrow">→</div>
+        <div class="ps" id="ps7">
+          <div class="ps-icon">✅</div>
+          <div class="ps-label">7. Response<br/>returned</div>
+        </div>
+      </div>
+
+      <div class="info-card" style="margin-top:1.5rem;">
+        <h3>API Call Details</h3>
+        <div class="kv"><span class="k">Method</span><span class="v">POST http://localhost:8000/predict</span></div>
+        <div class="kv"><span class="k">Content-type</span><span class="v">multipart/form-data (field name: file)</span></div>
+        <div class="kv"><span class="k">Preprocessing</span><span class="v">Pillow decode → RGB → Resize(224,224) → ToTensor → Normalize(ImageNet)</span></div>
+        <div class="kv"><span class="k">Model</span><span class="v">SimpleCNN (3 conv blocks + 2 FC layers, sigmoid output)</span></div>
+        <div class="kv"><span class="k">Decision rule</span><span class="v">prob ≥ 0.5 → Dog, prob &lt; 0.5 → Cat</span></div>
+        <div class="kv"><span class="k">Response</span><span class="v">{"label": "cat|dog", "probability": 0.xxxx, "inference_time_ms": xx.x}</span></div>
+        <div class="kv"><span class="k">Metrics emitted</span><span class="v">cats_dogs_predictions_total{label} — scraped by Prometheus every 15s</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── ABOUT ── -->
+  <section class="page-section" id="about">
+    <div class="container">
+      <h2>About This Project</h2>
+      <div class="info-grid">
+        <div class="info-card">
+          <h3>Student Details</h3>
+          <div class="kv"><span class="k">Name</span><span class="v">Sampath Kumar S Shetty</span></div>
+          <div class="kv"><span class="k">Student ID</span><span class="v">2024ac05041</span></div>
+          <div class="kv"><span class="k">Course</span><span class="v">AIMLCZG523 — MLOps (S1-25)</span></div>
+          <div class="kv"><span class="k">Institute</span><span class="v">BITS Pilani M.Tech AI/ML</span></div>
+        </div>
+        <div class="info-card">
+          <h3>Technology Stack</h3>
+          <div class="kv"><span class="k">Model</span><span class="v">SimpleCNN (PyTorch 2.4.1)</span></div>
+          <div class="kv"><span class="k">API</span><span class="v">FastAPI 0.115 + uvicorn</span></div>
+          <div class="kv"><span class="k">Experiment tracking</span><span class="v">MLflow 2.22.1</span></div>
+          <div class="kv"><span class="k">Data versioning</span><span class="v">DVC 3.55.2</span></div>
+          <div class="kv"><span class="k">Container</span><span class="v">Docker (python:3.12-slim, 449 MB)</span></div>
+          <div class="kv"><span class="k">CI/CD</span><span class="v">GitHub Actions</span></div>
+          <div class="kv"><span class="k">Monitoring</span><span class="v">Prometheus + Grafana 11.1</span></div>
+        </div>
+        <div class="info-card">
+          <h3>Git Information</h3>
+          <div class="kv"><span class="k">Repository</span><span class="v"><a href="https://github.com/sampathshetty85/cats-dogs-mlops" target="_blank">sampathshetty85/cats-dogs-mlops</a></span></div>
+          <div class="kv"><span class="k">Docker image</span><span class="v">ghcr.io/sampathshetty85/cats-dogs-mlops:latest</span></div>
+          <div class="kv"><span class="k">Default branch</span><span class="v">main</span></div>
+          <div class="kv"><span class="k">CI workflow</span><span class="v">.github/workflows/ci.yml</span></div>
+          <div class="kv"><span class="k">CD workflow</span><span class="v">.github/workflows/cd.yml</span></div>
+        </div>
+        <div class="info-card">
+          <h3>Dataset</h3>
+          <div class="kv"><span class="k">Source</span><span class="v">Microsoft Cats vs Dogs (Kaggle)</span></div>
+          <div class="kv"><span class="k">Total images</span><span class="v">~25,000</span></div>
+          <div class="kv"><span class="k">Train / Val / Test</span><span class="v">80% / 10% / 10%</span></div>
+          <div class="kv"><span class="k">Image size</span><span class="v">224 × 224 RGB</span></div>
+          <div class="kv"><span class="k">Versioning</span><span class="v">DVC (pointer files in git)</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── INSTALL ── -->
+  <section class="page-section" id="install" style="background:#f5f7fa;">
+    <div class="container">
+      <h2>Quick Start</h2>
+      <p style="font-size:0.92rem;color:#555;margin-bottom:1.2rem;">No Kaggle credentials or local training required. One command brings up the full stack.</p>
+      <div class="info-grid">
+        <div>
+          <h3 style="color:#1a3a5c;margin-bottom:0.75rem;">Option A — Docker (recommended)</h3>
+          <ol class="steps-list">
+            <li>Clone the repo:<br/><code style="font-size:0.82rem;">git clone https://github.com/sampathshetty85/cats-dogs-mlops</code></li>
+            <li>Enter the directory:<br/><code style="font-size:0.82rem;">cd cats-dogs-mlops</code></li>
+            <li>Start the full stack:<br/><code style="font-size:0.82rem;">docker compose up -d</code></li>
+            <li>Wait ~30s for the API to become healthy, then open this page</li>
+          </ol>
+        </div>
+        <div>
+          <h3 style="color:#1a3a5c;margin-bottom:0.75rem;">Option B — Local Python</h3>
+          <ol class="steps-list">
+            <li>Create venv:<br/><code style="font-size:0.82rem;">python3 -m venv .venv && source .venv/bin/activate</code></li>
+            <li>Install dependencies:<br/><code style="font-size:0.82rem;">pip install -r requirements.txt</code></li>
+            <li>Start API:<br/><code style="font-size:0.82rem;">uvicorn src.api.main:app --reload</code></li>
+            <li>Open this demo page</li>
+          </ol>
+        </div>
+      </div>
+      <div style="margin-top:1.5rem;">
+        <pre><code># Full stack (API + Prometheus + Grafana)
+docker compose up -d
+
+# Verify
+curl http://localhost:8000/health
+curl -F "file=@tests/fixtures/sample_cat.jpg" http://localhost:8000/predict
+
+# Tear down
+docker compose down</code></pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── TESTING ── -->
+  <section class="page-section" id="testing">
+    <div class="container">
+      <h2>Testing</h2>
+      <div class="info-grid">
+        <div class="info-card">
+          <h3>Unit Tests (7 tests)</h3>
+          <pre style="font-size:0.82rem;margin:0;"><code>pytest tests/ -v</code></pre>
+          <table class="score-table" style="margin-top:0.75rem;">
+            <tr><th>Test</th><th>What it checks</th></tr>
+            <tr><td>test_model_output_range</td><td>output in [0,1]</td></tr>
+            <tr><td>test_model_output_shape</td><td>shape (1,1)</td></tr>
+            <tr><td>test_health_endpoint</td><td>GET /health → 200</td></tr>
+            <tr><td>test_predict_endpoint</td><td>POST /predict → label</td></tr>
+            <tr><td>test_resize_output_shape</td><td>tensor shape [3,224,224]</td></tr>
+            <tr><td>test_normalize_range</td><td>values in [-3, 3]</td></tr>
+            <tr><td>test_augmentation_preserves_shape</td><td>augment keeps shape</td></tr>
+          </table>
+        </div>
+        <div class="info-card">
+          <h3>Smoke Test &amp; Batch Eval</h3>
+          <pre style="font-size:0.82rem;margin:0;"><code># Smoke test (needs API running)
+bash scripts/smoke_test.sh http://localhost:8000
+
+# Batch eval — 50 test images
+# logs results to MLflow
+python scripts/batch_eval.py</code></pre>
+          <div style="margin-top:0.75rem;">
+            <div class="kv"><span class="k">Smoke test checks</span><span class="v">GET /health → 200; POST /predict → label field present</span></div>
+            <div class="kv"><span class="k">Batch eval dataset</span><span class="v">25 cat + 25 dog from test set (seed=42)</span></div>
+            <div class="kv"><span class="k">MLflow logging</span><span class="v">accuracy, precision, recall, avg_latency</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── MONITORING ── -->
+  <section class="page-section" id="monitoring" style="background:#f5f7fa;">
+    <div class="container">
+      <h2>CI/CD &amp; Monitoring Links</h2>
+      <p style="font-size:0.88rem;color:#555;margin-bottom:1.2rem;">All services run locally via <code>docker compose up -d</code>. CI/CD runs on GitHub.</p>
+      <div class="link-grid">
+        <a class="link-card" href="http://localhost:3000" target="_blank">
+          <span class="lc-icon">📊</span>
+          <span class="lc-title">Grafana Dashboard</span>
+          <span class="lc-desc">Request rate, latency P50/P95, prediction distribution, error rate</span>
+          <span class="lc-url">localhost:3000 (admin / admin)</span>
+        </a>
+        <a class="link-card" href="http://localhost:9090" target="_blank">
+          <span class="lc-icon">🔥</span>
+          <span class="lc-title">Prometheus</span>
+          <span class="lc-desc">Raw metrics, targets, query console</span>
+          <span class="lc-url">localhost:9090</span>
+        </a>
+        <a class="link-card" href="http://localhost:8000/metrics" target="_blank">
+          <span class="lc-icon">📈</span>
+          <span class="lc-title">API Metrics Endpoint</span>
+          <span class="lc-desc">Raw Prometheus text: http_requests_total, latency histogram, cats_dogs_predictions_total</span>
+          <span class="lc-url">localhost:8000/metrics</span>
+        </a>
+        <a class="link-card" href="http://localhost:8000/docs" target="_blank">
+          <span class="lc-icon">📖</span>
+          <span class="lc-title">Swagger UI</span>
+          <span class="lc-desc">Interactive API docs — try /health and /predict in the browser</span>
+          <span class="lc-url">localhost:8000/docs</span>
+        </a>
+        <a class="link-card" href="https://github.com/sampathshetty85/cats-dogs-mlops/actions/workflows/ci.yml" target="_blank">
+          <span class="lc-icon">⚙️</span>
+          <span class="lc-title">GitHub Actions — CI</span>
+          <span class="lc-desc">lint → test (7) → Docker build (multi-arch) → push to ghcr.io</span>
+          <span class="lc-url">github.com · ci.yml</span>
+        </a>
+        <a class="link-card" href="https://github.com/sampathshetty85/cats-dogs-mlops/actions/workflows/cd.yml" target="_blank">
+          <span class="lc-icon">🚀</span>
+          <span class="lc-title">GitHub Actions — CD</span>
+          <span class="lc-desc">pull new image → docker compose up → smoke test on push to main</span>
+          <span class="lc-url">github.com · cd.yml</span>
+        </a>
+        <a class="link-card" href="https://github.com/sampathshetty85/cats-dogs-mlops/pkgs/container/cats-dogs-mlops" target="_blank">
+          <span class="lc-icon">🐳</span>
+          <span class="lc-title">Docker Image (ghcr.io)</span>
+          <span class="lc-desc">Multi-arch (amd64 + arm64), python:3.12-slim, 449 MB</span>
+          <span class="lc-url">ghcr.io/sampathshetty85/cats-dogs-mlops</span>
+        </a>
+        <a class="link-card" href="https://github.com/sampathshetty85/cats-dogs-mlops" target="_blank">
+          <span class="lc-icon">💻</span>
+          <span class="lc-title">GitHub Repository</span>
+          <span class="lc-desc">Source code, Dockerfile, k8s manifests, CI/CD workflows</span>
+          <span class="lc-url">github.com/sampathshetty85/cats-dogs-mlops</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── MODEL SCORES ── -->
+  <section class="page-section" id="scores">
+    <div class="container">
+      <h2>Model Performance Scores</h2>
+      <div class="info-grid">
+        <div>
+          <h3 style="color:#1a3a5c;margin-bottom:0.75rem;">Training Metrics (5 epochs)</h3>
+          <table class="score-table">
+            <tr><th>Metric</th><th>Value</th><th class="score-bar-cell">Bar</th></tr>
+            <tr><td>Val Accuracy</td><td>82.7%</td><td><div class="score-bar" style="width:82.7%"></div></td></tr>
+            <tr><td>Train Loss (final)</td><td>0.38</td><td><div class="score-bar" style="width:38%"></div></td></tr>
+            <tr><td>Val Loss (final)</td><td>0.42</td><td><div class="score-bar" style="width:42%"></div></td></tr>
+          </table>
+          <div style="margin-top:1rem;">
+            <div class="kv"><span class="k">Epochs</span><span class="v">5</span></div>
+            <div class="kv"><span class="k">Optimizer</span><span class="v">Adam (lr=0.001)</span></div>
+            <div class="kv"><span class="k">Batch size</span><span class="v">32</span></div>
+            <div class="kv"><span class="k">Loss function</span><span class="v">BCELoss</span></div>
+          </div>
+        </div>
+        <div>
+          <h3 style="color:#1a3a5c;margin-bottom:0.75rem;">Post-Deployment Batch Evaluation (50 images)</h3>
+          <table class="score-table">
+            <tr><th>Metric</th><th>Value</th><th class="score-bar-cell">Bar</th></tr>
+            <tr><td>Accuracy</td><td>86.0%</td><td><div class="score-bar" style="width:86%"></div></td></tr>
+            <tr><td>Precision (cat)</td><td>84.6%</td><td><div class="score-bar" style="width:84.6%"></div></td></tr>
+            <tr><td>Recall (cat)</td><td>88.0%</td><td><div class="score-bar" style="width:88%"></div></td></tr>
+            <tr><td>Avg latency</td><td>13.8 ms</td><td><div class="score-bar" style="width:14%"></div></td></tr>
+          </table>
+          <div style="margin-top:1rem;">
+            <div class="kv"><span class="k">Test images</span><span class="v">25 cat + 25 dog (seed=42)</span></div>
+            <div class="kv"><span class="k">Correct</span><span class="v">43 / 50</span></div>
+            <div class="kv"><span class="k">MLflow run</span><span class="v">batch_eval_post_deploy (stage=post_deploy)</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 
   <footer>
     <div class="container">
       <p>
-        Powered by SimpleCNN &nbsp;·&nbsp; MLOps Assignment 2 &nbsp;·&nbsp; 2024ac05041
-        &nbsp;·&nbsp; <a href="index.html" style="color:rgba(255,255,255,0.7);">Project Report</a>
+        🐾 PawFinder &nbsp;·&nbsp; Powered by SimpleCNN &nbsp;·&nbsp;
+        MLOps Assignment 2 &nbsp;·&nbsp; 2024ac05041 &nbsp;·&nbsp;
+        <a href="index.html" style="color:rgba(255,255,255,0.7);">Project Report</a>
+        &nbsp;·&nbsp;
+        <a href="report.pdf" style="color:rgba(255,255,255,0.7);" target="_blank">PDF</a>
       </p>
     </div>
   </footer>
 
   <script>
     const API = 'http://localhost:8000';
-    const zone     = document.getElementById('upload-zone');
-    const fileInput = document.getElementById('file-input');
+    const zone       = document.getElementById('upload-zone');
+    const fileInput  = document.getElementById('file-input');
     const previewWrap = document.getElementById('preview-wrap');
     const previewImg  = document.getElementById('preview-img');
     const previewName = document.getElementById('preview-name');
@@ -222,6 +479,7 @@
     const errorBox    = document.getElementById('error-box');
     const resultCard  = document.getElementById('result-card');
     const resetBtn    = document.getElementById('reset-btn');
+    const steps       = [1,2,3,4,5,6,7].map(i => document.getElementById('ps'+i));
 
     let selectedFile = null;
 
@@ -229,15 +487,10 @@
     zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
     zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
     zone.addEventListener('drop', e => {
-      e.preventDefault();
-      zone.classList.remove('drag-over');
-      const file = e.dataTransfer.files[0];
-      if (file) setFile(file);
+      e.preventDefault(); zone.classList.remove('drag-over');
+      if (e.dataTransfer.files[0]) setFile(e.dataTransfer.files[0]);
     });
-
-    fileInput.addEventListener('change', () => {
-      if (fileInput.files[0]) setFile(fileInput.files[0]);
-    });
+    fileInput.addEventListener('change', () => { if (fileInput.files[0]) setFile(fileInput.files[0]); });
 
     function setFile(file) {
       selectedFile = file;
@@ -247,42 +500,68 @@
       identifyBtn.disabled = false;
       hideError();
       resultCard.style.display = 'none';
+      resetSteps();
+    }
+
+    function resetSteps() { steps.forEach(s => { s.classList.remove('active','done'); }); }
+
+    function animateSteps(done) {
+      resetSteps();
+      const delays = [0, 80, 160, 240, 320, 400, 480];
+      steps.forEach((s, i) => {
+        setTimeout(() => {
+          steps.forEach((x,j) => { x.classList.toggle('active', j===i); });
+          if (done && i === steps.length - 1) {
+            setTimeout(() => steps.forEach(x => { x.classList.remove('active'); x.classList.add('done'); }), 200);
+          }
+        }, delays[i]);
+      });
     }
 
     identifyBtn.addEventListener('click', async () => {
       if (!selectedFile) return;
       identifyBtn.disabled = true;
-      identifyBtn.classList.add('loading');
       identifyBtn.textContent = 'Identifying…';
       hideError();
       resultCard.style.display = 'none';
+
+      // Start pipeline animation
+      const animInterval = setInterval(() => {
+        const i = (steps.findIndex(s => s.classList.contains('active')) + 1) % steps.length;
+        steps.forEach((s,j) => s.classList.toggle('active', j===i));
+      }, 120);
 
       const form = new FormData();
       form.append('file', selectedFile);
 
       try {
         const res = await fetch(`${API}/predict`, { method: 'POST', body: form });
+        clearInterval(animInterval);
         if (!res.ok) throw new Error(`API returned ${res.status}`);
         const data = await res.json();
+        animateSteps(true);
         showResult(data);
       } catch (err) {
+        clearInterval(animInterval);
+        resetSteps();
         showError(err);
       } finally {
         identifyBtn.disabled = false;
-        identifyBtn.classList.remove('loading');
         identifyBtn.textContent = 'Identify Pet';
       }
     });
 
     function showResult(data) {
-      const label = data.label;         // "cat" or "dog"
-      const pct   = Math.round(data.probability * 100);
-      const ms    = data.inference_time_ms.toFixed(1);
+      const label = data.label;
+      // Confidence in the predicted label (not raw sigmoid)
+      const labelConf = label === 'dog' ? data.probability : 1 - data.probability;
+      const pct = Math.round(labelConf * 100);
+      const ms  = data.inference_time_ms.toFixed(1);
 
       document.getElementById('pet-emoji').textContent = label === 'cat' ? '🐱' : '🐶';
       document.getElementById('pet-type').textContent  = label === 'cat' ? 'Cat' : 'Dog';
       document.getElementById('conf-bar').style.width  = `${pct}%`;
-      document.getElementById('conf-pct').textContent  = `${pct}%`;
+      document.getElementById('conf-pct').textContent  = `${pct}% confident it's a ${label}`;
       document.getElementById('latency-badge').textContent = `Identified in ${ms} ms`;
 
       resultCard.style.display = 'block';
@@ -290,21 +569,17 @@
     }
 
     function showError(err) {
-      errorBox.innerHTML = `Could not reach the API. Make sure the stack is running: <code>docker compose up -d</code><br><small>${err.message}</small>`;
+      errorBox.innerHTML = `Could not reach the API. Make sure the stack is running: <code>docker compose up -d</code><br/><small>${err.message}</small>`;
       errorBox.style.display = 'block';
     }
-
     function hideError() { errorBox.style.display = 'none'; }
 
     resetBtn.addEventListener('click', () => {
-      selectedFile = null;
-      fileInput.value = '';
-      previewWrap.style.display = 'none';
-      previewImg.src = '';
-      previewName.textContent = '';
+      selectedFile = null; fileInput.value = '';
+      previewWrap.style.display = 'none'; previewImg.src = ''; previewName.textContent = '';
       identifyBtn.disabled = true;
       resultCard.style.display = 'none';
-      hideError();
+      hideError(); resetSteps();
     });
   </script>
 
