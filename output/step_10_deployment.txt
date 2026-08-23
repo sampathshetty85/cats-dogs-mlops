@@ -1,0 +1,34 @@
+# Report: step_10_deployment
+# Generated: 2026-08-23T00:00:00Z
+#------------------------------------------------------------
+
+Deployment target  : Docker Compose (docker-compose.yml)
+Services           : api + prometheus + grafana
+
+docker-compose.yml services:
+  api        : ghcr.io/sampathshetty85/cats-dogs-mlops:latest  port 8000
+  prometheus : prom/prometheus:v2.53.0                          port 9090
+  grafana    : grafana/grafana:11.1.0                           port 3000
+
+Evaluator quick-start:
+  git clone https://github.com/sampathshetty85/cats-dogs-mlops
+  cd cats-dogs-mlops
+  docker compose up -d
+  curl http://localhost:8000/health
+  curl -F "file=@tests/fixtures/sample_cat.jpg" http://localhost:8000/predict
+  open http://localhost:3000   # Grafana (admin/admin)
+
+Smoke test results (scripts/smoke_test.sh):
+  GET  /health  → 200 OK
+  POST /predict → {"label":"cat","probability":0.1971,"inference_time_ms":167.17}
+  Smoke tests passed.
+
+CD workflow (.github/workflows/cd.yml):
+  Triggers : push to main + workflow_dispatch
+  Steps    : docker compose pull api → docker compose up -d → wait for /health 200 → smoke test
+  On fail  : docker compose logs printed; pipeline fails
+
+Kubernetes manifests (k8s/):
+  k8s/deployment.yaml : replicas=2, liveness+readiness probes on /health
+  k8s/service.yaml    : LoadBalancer port 80 → 8000
+  (apply with: kubectl apply -f k8s/)

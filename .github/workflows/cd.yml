@@ -1,0 +1,48 @@
+name: CD
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: read
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Pull latest image
+        run: docker compose pull api
+
+      - name: Start stack
+        run: docker compose up -d
+
+      - name: Wait for API to be ready
+        run: |
+          for i in $(seq 1 12); do
+            STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8000/health || echo "000")
+            if [ "$STATUS" = "200" ]; then
+              echo "API ready after ${i}x5s"
+              break
+            fi
+            echo "Waiting... ($i/12) status=$STATUS"
+            sleep 5
+          done
+          [ "$STATUS" = "200" ] || { echo "API did not become ready in 60s"; exit 1; }
+
+      - name: Run smoke tests
+        run: bash scripts/smoke_test.sh
+
+      - name: Show container logs on failure
+        if: failure()
+        run: docker compose logs
