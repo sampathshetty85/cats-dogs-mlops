@@ -24,3 +24,7 @@ mlruns/
 
 # Environment
 .env
+
+# Claude Code
+CLAUDE.md
+.claude/
