@@ -129,6 +129,7 @@ cats-dogs-mlops/
 | Resource | URL |
 |----------|-----|
 | **PawFinder Demo** | https://sampathshetty85.github.io/cats-dogs-mlops/demo.html |
+| **Demo Video** | https://youtu.be/SuxLDBvdej8 |
 | GitHub | https://github.com/sampathshetty85/cats-dogs-mlops |
 | Docker image | `ghcr.io/sampathshetty85/cats-dogs-mlops:latest` |
 | GitHub Pages | https://sampathshetty85.github.io/cats-dogs-mlops/ |
