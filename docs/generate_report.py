@@ -22,8 +22,8 @@ from reportlab.platypus import (
 )
 
 REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-OUTPUT_DIR = os.path.join(REPO_ROOT, "docs")
-PDF_PATH = os.path.join(OUTPUT_DIR, "report.pdf")
+OUTPUT_DIR = REPO_ROOT
+PDF_PATH = os.path.join(OUTPUT_DIR, "01-Cats and Dogs-Project Report.pdf")
 
 PAGE_W, PAGE_H = A4
 MARGIN = 2 * cm
