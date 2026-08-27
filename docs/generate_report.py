@@ -101,6 +101,8 @@ def cover_page() -> list:
         Spacer(1, 1 * cm),
         Paragraph("GitHub: https://github.com/sampathshetty85/cats-dogs-mlops", SUBTITLE),
         Paragraph("Docker: ghcr.io/sampathshetty85/cats-dogs-mlops:latest", SUBTITLE),
+        Paragraph("Demo Video: https://youtu.be/SuxLDBvdej8", SUBTITLE),
+        Paragraph("Live Demo: https://sampathshetty85.github.io/cats-dogs-mlops/demo.html", SUBTITLE),
         Spacer(1, 2 * cm),
         HR(),
         Spacer(1, 0.5 * cm),
@@ -499,9 +501,11 @@ def conclusion() -> list:
         Spacer(1, 0.5 * cm),
         Paragraph("Repository Links", H2),
         *code_block([
-            "GitHub  : https://github.com/sampathshetty85/cats-dogs-mlops",
-            "Docker  : ghcr.io/sampathshetty85/cats-dogs-mlops:latest",
-            "CI badge: https://github.com/sampathshetty85/cats-dogs-mlops/actions/workflows/ci.yml",
+            "GitHub     : https://github.com/sampathshetty85/cats-dogs-mlops",
+            "Docker     : ghcr.io/sampathshetty85/cats-dogs-mlops:latest",
+            "Demo Video : https://youtu.be/SuxLDBvdej8",
+            "Live Demo  : https://sampathshetty85.github.io/cats-dogs-mlops/demo.html",
+            "CI badge   : https://github.com/sampathshetty85/cats-dogs-mlops/actions/workflows/ci.yml",
         ]),
     ]
 
