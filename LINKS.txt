@@ -1,0 +1,20 @@
+SUBMISSION LINKS
+================
+
+Student     : Sampath Kumar S Shetty
+ID          : 2024ac05041
+Course      : AIMLCZG523 — MLOps (S1-25), BITS Pilani
+
+Demo Video  : https://youtu.be/SuxLDBvdej8
+Live Demo   : https://sampathshetty85.github.io/cats-dogs-mlops/demo.html
+GitHub Repo : https://github.com/sampathshetty85/cats-dogs-mlops
+Docker Image: ghcr.io/sampathshetty85/cats-dogs-mlops:latest
+PDF Report  : https://sampathshetty85.github.io/cats-dogs-mlops/report.pdf
+
+Quick Start (evaluator)
+-----------------------
+  git clone https://github.com/sampathshetty85/cats-dogs-mlops
+  cd cats-dogs-mlops
+  docker compose up -d
+  curl http://localhost:8000/health
+  curl -F "file=@tests/fixtures/sample_cat.jpg" http://localhost:8000/predict
