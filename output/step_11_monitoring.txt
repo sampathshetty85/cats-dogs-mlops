@@ -1,13 +1,13 @@
 # Report: step_11_monitoring
-# Generated: 2026-08-23T07:32:38Z
+# Generated: 2026-08-23T09:52:19Z
 #------------------------------------------------------------
 
 API URL      : http://localhost:8000
 Total samples: 50 (25 cat + 25 dog from test set)
-Correct      : 43
-Accuracy     : 0.8600
-Precision    : 0.8462  (cat class)
-Recall       : 0.8800  (cat class)
-Avg latency  : 13.8 ms
+Correct      : 28
+Accuracy     : 0.5600
+Precision    : 0.8000  (cat class)
+Recall       : 0.1600  (cat class)
+Avg latency  : 23.1 ms
 
 MLflow run   : batch_eval_post_deploy (tag: stage=post_deploy)
